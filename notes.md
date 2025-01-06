@@ -1,0 +1,1 @@
+- All assignments must have at least 10 commits evenly spread out. Otherwise, you have to justify why before it is accepted.
