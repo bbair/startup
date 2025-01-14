@@ -18,22 +18,6 @@ If you've gotten bored with the original version of the game Battleship, then th
 #### About/Rules Page
 ![About Page](Images/AboutPageDesign.PNG)
 
-#### Navigation
-Here is a sequence diagram that shows how a user might interact with and navigate the website.
-
-```sequence
-actor User
-User->>Login: Enter login information
-Login->>About/Rules: See about/rules information
-About-->>Login: Login
-Login->>Play: Start game
-Play->>Play: Repeat sequences
-Play->>Play: View other player's moves
-Play-->>Login: Logout
-Login-->>Color Palette: Change color palette
-Color Palette->>Color Palette: Generate color palette
-```
-
 ### Key Features
 - Login, logout, and register
 - Play by choosing spots to place your ships and spots to attack your opponent's ships
