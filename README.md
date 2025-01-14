@@ -1,4 +1,4 @@
-# salvo
+# Salvo
 Startup web application
 
 ## Notes File
