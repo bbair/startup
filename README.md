@@ -18,3 +18,11 @@ If you've gotten bored with the original version of the game Battleship, then th
 - Change the color palette
 
 ### Technologies
+I am going to use the required technologies in the following ways:
+
+- HTML - Four different views, login/register controls, play, change color palette, and about.
+- CSS - Application styling for different screen sizes, responsive design, good whitespace.
+- React - Routing between views, dynamically change color palette, and reactive user controls.
+- Service - Endpoints for authentication, storing/retrieving ship positions and hits. Third party call to get color palette.
+- DB/Login - Stores authentication, positions, and hits.
+- WebSocket - Broadcast opponent's attacks and hits.
