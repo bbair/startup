@@ -9,9 +9,13 @@ Startup web application
 If you've gotten bored with the original version of the game Battleship, then this spinoff may interest you! You can play out a more realistic naval battle with a friend online! Similar to real overseas combat, each turn you will be able to attack with each ship in your armada that has not yet been sunk. Try and take out your opponent's fleet before they sink yours.
 
 ### Design
+#### Login Page
 ![Login Page](Images/LoginPageDesign.PNG)
+#### Play Page
 ![Play Page](Images/PlayPageDesign.PNG)
+#### Change Color Palette Page
 ![Color Palette Page](Images/ColorPalettePageDesign.PNG)
+#### About/Rules Page
 ![About Page](Images/AboutPageDesign.PNG)
 
 ### Key Features
