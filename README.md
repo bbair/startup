@@ -20,17 +20,19 @@ If you've gotten bored with the original version of the game Battleship, then th
 
 #### Navigation
 Here is a sequence diagram that shows how a user might interact with and navigate the website.
-    sequenceDiagram
-    actor User
-    User->>Login: Enter login information
-    Login->>About/Rules: See about/rules information
-    About-->>Login: Login
-    Login->>Play: Start game
-    Play->>Play: Repeat sequences
-    Play->>Play: View other player's moves
-    Play-->>Login: Logout
-    Login-->>Color Palette: Change color palette
-    Color Palette->>Color Palette: Generate color palette
+
+```sequence
+actor User
+User->>Login: Enter login information
+Login->>About/Rules: See about/rules information
+About-->>Login: Login
+Login->>Play: Start game
+Play->>Play: Repeat sequences
+Play->>Play: View other player's moves
+Play-->>Login: Logout
+Login-->>Color Palette: Change color palette
+Color Palette->>Color Palette: Generate color palette
+```
 
 ### Key Features
 - Login, logout, and register
