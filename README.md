@@ -1,5 +1,5 @@
 # Salvo
-Startup web application
+Salvo is a spinoff of the well-known game of Battleship. In this online naval battle game, you will be able to attack with each of your ships, trying to sink your opponent's ships before they sink yours!
 
 ## Notes File
 [HERE](notes.md)
