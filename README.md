@@ -4,6 +4,9 @@ Salvo is a spinoff of the well-known game of Battleship. In this online naval ba
 ## Notes File
 [HERE](notes.md)
 
+## Website link
+https://startup.salvoattack.click
+
 ## Specification Deliverable
 ### Elevator Pitch
 If you've gotten bored with the original version of the game Battleship, then this spinoff may interest you! You can play out a more realistic naval battle with a friend online! Similar to real overseas combat, each turn you will be able to attack with each ship in your armada that has not yet been sunk. Try and take out your opponent's fleet before they sink yours.
@@ -34,3 +37,5 @@ I am going to use the required technologies in the following ways:
 - Service - Endpoints for authentication, storing/retrieving ship positions and hits. Third party call to get color palette.
 - DB/Login - Stores authentication, positions, and hits.
 - WebSocket - Broadcast opponent's attacks and hits.
+
+## HTML Deliverable
