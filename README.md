@@ -5,7 +5,7 @@ Salvo is a spinoff of the well-known game of Battleship. In this online naval ba
 [HERE](notes.md)
 
 ## Website link
-https://startup.salvoattack.click
+[salvoattack](https://startup.salvoattack.click)
 
 ## Specification Deliverable
 ### Elevator Pitch
