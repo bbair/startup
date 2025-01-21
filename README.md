@@ -47,6 +47,6 @@ For this deliverable I built out the structure of my application using HTML.
 - [x] **Text** - About/rules page has textual description of the page and the rules of the game.
 - [x] **Placeholder for 3rd party service calls** - The 'generate' button in the color palette page will be linked to an external API to generate a custom color palette for the website.
 - [x] **Images** - Displays title image on each page.
-- [x] **Login** - Placeholder for authentication on the login page.
+- [x] **Login** - Placeholder for authentication on the login page. Place for user's name to be displayed on the play page.
 - [x] **DB** - Authentication information, including the user's name, as well as the user's custom palette for the site will be stored in the database and displayed on the play (user's name) and color palette (custom palette as current colors) pages respectively.
 - [x] **WebSocket** - The player and opponent's boards on the play page will populate in real time with hits and misses.
