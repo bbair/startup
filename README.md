@@ -1,5 +1,5 @@
-# Salvo
-Salvo is a spinoff of the well-known game of Battleship. In this online naval battle game, you will be able to attack with each of your ships, trying to sink your opponent's ships before they sink yours!
+# Salvo Attack
+Salvo Attack is a spinoff of the well-known game of Battleship. In this online naval battle game, you will be able to attack with each of your ships, trying to sink your opponent's ships before they sink yours!
 
 ## Notes File
 [HERE](notes.md)
@@ -39,3 +39,14 @@ I am going to use the required technologies in the following ways:
 - WebSocket - Broadcast opponent's attacks and hits.
 
 ## HTML Deliverable
+For this deliverable I built out the structure of my application using HTML.
+
+- [x] **HTML pages** - Four HTML pages that represent the ability to login, play, customize the color palette, and learn about the website and the rules.
+- [x] **Proper HTML element usage** - I used HTML tags, including BODY, NAV, MAIN, HEADER, FOOTER, to give structure to the pages. I also used buttons, inputs, color pickers, svgs, and more to add some functionality/design to the pages.
+- [x] **Links** - All pages link to the other pages.
+- [x] **Text** - About/rules page has textual description of the page and the rules of the game.
+- [x] **Placeholder for 3rd party service calls** - The 'generate' button in the color palette page will be linked to an external API to generate a custom color palette for the website.
+- [x] **Images** - Displays title image on each page.
+- [x] **Login** - Placeholder for authentication on the login page.
+- [x] **DB** - Authentication information, including the user's name, as well as the user's custom palette for the site will be stored in the database and displayed on the play (user's name) and color palette (custom palette as current colors) pages respectively.
+- [x] **WebSocket** - The player and opponent's boards on the play page will populate in real time with hits and misses.
