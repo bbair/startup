@@ -50,3 +50,13 @@ For this deliverable I built out the structure of my application using HTML.
 - [x] **Login** - Placeholder for authentication on the login page. Place for user's name to be displayed on the play page.
 - [x] **DB** - Authentication information, including the user's name, as well as the user's custom palette for the site will be stored in the database and displayed on the play (user's name) and color palette (custom palette as current colors) pages respectively.
 - [x] **WebSocket** - The player and opponent's boards on the play page will populate in real time with hits and misses.
+
+## CSS Deliverable
+For this deliverable I properly styled the application into its final appearance.
+
+- [ ] **Header, footer, and main content body**
+- [ ] **Navigation elements** - 
+- [ ] **Responsive to window resizing** - 
+- [ ] **Application elements** - 
+- [ ] **Application text content** - 
+- [ ] **Application images** - 
