@@ -54,9 +54,9 @@ For this deliverable I built out the structure of my application using HTML.
 ## CSS Deliverable
 For this deliverable I properly styled the application into its final appearance.
 
-- [ ] **Header, footer, and main content body**
-- [ ] **Navigation elements** - 
-- [ ] **Responsive to window resizing** - 
-- [ ] **Application elements** - 
-- [ ] **Application text content** - 
-- [ ] **Application images** - 
+- [x] **Header, footer, and main content body** - All the pages of the application have these sections.
+- [x] **Navigation elements** - I used bootstrap to style the navigation links and added an underline to highlight the active page.
+- [x] **Responsive to window resizing** - My app looks great on all window sizes and devices.
+- [x] **Application elements** - I styled the elements with good whitespace, contrast, and appealing coloring.
+- [x] **Application text content** - The fonts are consistent and the coloring and sizing of different sections gives them contrast.
+- [x] **Application images** - I made the image of the logo in the header a brand element in the navigation bar.
