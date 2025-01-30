@@ -1,0 +1,13 @@
+.color-block {
+    padding-right: 1em;
+    padding-left: 1em;
+}
+
+.palette-block {
+    padding: 2em;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
