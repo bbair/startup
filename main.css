@@ -8,6 +8,7 @@ body {
 
 footer {
   flex: 0 30px;
+  font-family: 'Space Mono';
 }
 
 menu {
