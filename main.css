@@ -6,6 +6,10 @@ body {
   min-width: 375px;
 }
 
+footer {
+  flex: 0 30px;
+}
+
 menu {
   flex: 1;
   display: flex;
@@ -22,6 +26,10 @@ menu .nav-item {
 
 menu .nav-item .active {
   border-bottom: solid rgb(182, 182, 182) thin;
+}
+
+footer a {
+  float: right;
 }
 
 .green-text {
