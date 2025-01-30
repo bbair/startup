@@ -1,0 +1,27 @@
+main .legend-box .element {
+    padding-right: 0.3em;
+    padding-left: 0.3em;
+}
+
+section {
+    display: flex;
+    flex-direction: row;
+}
+
+.legend-box {
+    margin-top: 1em;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+.legend-elements {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+@media (orientation: portrait) {
+    section {
+        flex-direction: column;
+    }
+}
