@@ -59,4 +59,4 @@ For this deliverable I properly styled the application into its final appearance
 - [x] **Responsive to window resizing** - My app looks great on all window sizes and devices.
 - [x] **Application elements** - I styled the elements with good whitespace, contrast, and appealing coloring.
 - [x] **Application text content** - The fonts are consistent and the coloring and sizing of different sections gives them contrast.
-- [x] **Application images** - I made the image of the logo in the header a brand element in the navigation bar.
+- [x] **Application images** - I made the image of the logo in the header a brand element in the navigation bar and gave the navigation elements the proper spacing next to it.
