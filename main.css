@@ -6,6 +6,15 @@ body {
   min-width: 375px;
 }
 
+main {
+  flex: 1 calc(100vh - 112px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  font-family: 'Space Mono';
+}
+
 footer {
   flex: 0 30px;
   font-family: 'Space Mono';
