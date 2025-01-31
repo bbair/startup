@@ -13,13 +13,13 @@ If you've gotten bored with the original version of the game Battleship, then th
 
 ### Design
 #### Login Page
-![Login Page](Images/LoginPageDesign.PNG)
+![Login Page](public/LoginPageDesign.PNG)
 #### Play Page
-![Play Page](Images/PlayPageDesign.PNG)
+![Play Page](public/PlayPageDesign.PNG)
 #### Change Color Palette Page
-![Color Palette Page](Images/ColorPalettePageDesign.PNG)
+![Color Palette Page](public/ColorPalettePageDesign.PNG)
 #### About/Rules Page
-![About Page](Images/AboutPageDesign.PNG)
+![About Page](public/AboutPageDesign.PNG)
 
 ### Key Features
 - Login, logout, and register
