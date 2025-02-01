@@ -11,20 +11,20 @@ export default function App() {
   return (
     <BrowserRouter>
         <div className='body bg-dark text-light'>
-            <header class="bg-black bg-gradient">
-                <nav class="navbar navbar-dark">
+            <header className="bg-black bg-gradient">
+                <nav className="navbar navbar-dark">
                     <div id="title" class="navbar-brand"><img width="400px" src="/SalvoAttackTitle.png" alt="Salvo Attack"/></div>
-                    <menu class="navbar-nav">
-                        <li class="nav-item">
+                    <menu className="navbar-nav">
+                        <li className="nav-item">
                             <NavLink className='nav-link' to=''>Login</NavLink>
                         </li>
-                        <li class="nav-item">
+                        <li className="nav-item">
                             <NavLink className='nav-link' to='play'>Play</NavLink>
                         </li>
-                        <li class="nav-item">
+                        <li className="nav-item">
                             <NavLink className='nav-link' to='color_palette'>Color Palette</NavLink>
                         </li>
-                        <li class="nav-item">
+                        <li className="nav-item">
                             <NavLink className='nav-link' to='about_rules'>About/Rules</NavLink>
                         </li>
                     </menu>
@@ -39,9 +39,9 @@ export default function App() {
                 <Route path='*' element={<NotFound />} />
             </Routes>
 
-            <footer class="bg-black bg-gradient text-white-50">
+            <footer className="bg-black bg-gradient text-white-50">
                 <span>Brianna Nielson</span>
-                <a class="text-reset" href="https://github.com/bbair/startup">Github Repo</a>
+                <a className="text-reset" href="https://github.com/bbair/startup">Github Repo</a>
             </footer>
         </div>
     </BrowserRouter>
