@@ -13,7 +13,7 @@ export default function App() {
         <div className='body bg-dark text-light'>
             <header className="bg-black bg-gradient">
                 <nav className="navbar navbar-dark">
-                    <div id="title" class="navbar-brand"><img width="400px" src="/SalvoAttackTitle.png" alt="Salvo Attack"/></div>
+                    <div id="title" className="navbar-brand"><img width="400px" src="/SalvoAttackTitle.png" alt="Salvo Attack"/></div>
                     <menu className="navbar-nav">
                         <li className="nav-item">
                             <NavLink className='nav-link' to=''>Login</NavLink>
