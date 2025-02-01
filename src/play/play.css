@@ -1,11 +1,11 @@
-main .legend-box .element {
-    padding-right: 0.3em;
-    padding-left: 0.3em;
-}
-
 section {
     display: flex;
     flex-direction: row;
+}
+
+.element {
+    padding-right: 0.5em;
+    padding-left: 0.5em;
 }
 
 .legend-box {
