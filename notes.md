@@ -5,8 +5,11 @@
 > How to ssh into my server:
 > ssh -i path/to/key/pair/file ubuntu@3.80.190.138
 
-> How to deploy the website:
+> How to deploy the website (pre-react):
 > ./deployFiles.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
+
+> How to deploy the website (post-react):
+> ./deployReact.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
 
 # CSS
 - Use `<link rel="stylesheet" href="styles.css" />` in head element to link external css file to html
@@ -54,3 +57,11 @@ and this at the end of the body section if you use components like buttons that 
 ></script>
 ```
 - Download Bootstrap with NPM: `npm install bootstrap@5.2.3`
+
+# React
+- Start debugging in VS code by pressing F5 and selecting Node.js as the debugger. Press F5 to run again.
+  - F10 for next line, F11 to step into a function, F5 to continue running, and SHIFT+F5 to stop debugging.
+- Use `node --watch script.js` to have node automatically watch for changes and reload.
+- Use `npx vite` to run vite (because it's a CLI).
+  - Press `o` to have vite open the browser for you.
+  - Stop by pressing `q`.

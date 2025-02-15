@@ -13,13 +13,13 @@ If you've gotten bored with the original version of the game Battleship, then th
 
 ### Design
 #### Login Page
-![Login Page](Images/LoginPageDesign.PNG)
+![Login Page](public/LoginPageDesign.PNG)
 #### Play Page
-![Play Page](Images/PlayPageDesign.PNG)
+![Play Page](public/PlayPageDesign.PNG)
 #### Change Color Palette Page
-![Color Palette Page](Images/ColorPalettePageDesign.PNG)
+![Color Palette Page](public/ColorPalettePageDesign.PNG)
 #### About/Rules Page
-![About Page](Images/AboutPageDesign.PNG)
+![About Page](public/AboutPageDesign.PNG)
 
 ### Key Features
 - Login, logout, and register
@@ -60,3 +60,10 @@ For this deliverable I properly styled the application into its final appearance
 - [x] **Application elements** - I styled the elements with good whitespace, contrast, and appealing coloring.
 - [x] **Application text content** - The fonts are consistent and the coloring and sizing of different sections gives them contrast.
 - [x] **Application images** - I made the image of the logo in the header a brand element in the navigation bar and gave the navigation elements the proper spacing next to it.
+
+## React Part 1: Routing Deliverable
+For this deliverable, I did the following:
+
+- [x] **Bundled using Vite** - I bundled the application using Vite.
+- [x] **Multiple react components that contain your HTML and CSS** - I converted all my individual pages (login, play, color palette, and about/rules) to react components.
+- [x] **React router** - I implemented a react router in the app component to route between the different pages.

@@ -1,6 +1,12 @@
 .color-block {
     padding-right: 1em;
     padding-left: 1em;
+    display: flex;
+    flex-direction: row;
+}
+
+.color-picker {
+    padding-left: 0.5em;
 }
 
 .palette-block {
