@@ -5,8 +5,11 @@
 > How to ssh into my server:
 > ssh -i path/to/key/pair/file ubuntu@3.80.190.138
 
-> How to deploy the website:
+> How to deploy the website (pre-react):
 > ./deployFiles.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
+
+> How to deploy the website (post-react):
+> ./deployReact.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
 
 # CSS
 - Use `<link rel="stylesheet" href="styles.css" />` in head element to link external css file to html
