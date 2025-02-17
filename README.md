@@ -67,3 +67,9 @@ For this deliverable, I did the following:
 - [x] **Bundled using Vite** - I bundled the application using Vite.
 - [x] **Multiple react components that contain your HTML and CSS** - I converted all my individual pages (login, play, color palette, and about/rules) to react components.
 - [x] **React router** - I implemented a react router in the app component to route between the different pages.
+
+## React Part 2: Reactivity Deliverable
+For this deliverable I used JavaScript and React so that the application completely works for a single user. I also added placeholders for future technology.
+
+- [ ] **Multiple react components that implement or mock all app functionality** - 
+- [ ] **React `useState` and `useEffect` hooks** - 
