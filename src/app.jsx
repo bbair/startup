@@ -4,7 +4,7 @@ import { Login } from './login/login';
 import { Play } from './play/play';
 import { ColorPalette } from './color_palette/color_palette';
 import { AboutRules } from './about_rules/about_rules';
-import { AuthState } from './login/authState';
+import { AuthState } from './login/auth_state';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 
