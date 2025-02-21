@@ -46,6 +46,10 @@ footer a {
     color: rgb(36, 227, 36);
 }
 
+.spaced-button {
+  margin: 0.25em;
+}
+
 @media (max-height: 400px) {
   header {
     display: none;

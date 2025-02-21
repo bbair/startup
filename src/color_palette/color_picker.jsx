@@ -1,14 +1,15 @@
 import React from 'react';
-export function ColorPicker() {
-    const [color, updateColor] = React.useState('#FFFFFF');
+
+export function ColorPicker(props) {
+    // const [color, updateColor] = React.useState(customColor);
 
     function onChange(e) {
-        updateColor(e.target.value);
+        props.onChangeColor(e.target.value);
     }
 
     return (
         <div>
-            <input type="color" onChange={onChange} value={color} />
+            <input type="color" onChange={onChange} value={props.color} />
         </div>
     );
 }
