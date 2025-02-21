@@ -1,4 +1,5 @@
 import React from 'react';
+import { ColorPicker } from './color_picker';
 import './color_palette.css'
 
 export function ColorPalette() {
@@ -10,7 +11,7 @@ export function ColorPalette() {
                 <div className="color-block">
                     <label for="current-color-main">Main (Grid): </label>
                     <div className="color-picker">
-                    <input type="color" id="current-color-main" name="current-color-main" disabled="true" value="#008000"/>
+                        <input type="color" id="current-color-main" name="current-color-main" disabled="true" value="#008000"/>
                     </div>
                 </div>
                 <div className="color-block">
@@ -25,13 +26,13 @@ export function ColorPalette() {
                 <div className="color-block">
                     <label for="current-color-main">Main (Grid): </label>
                     <div className="color-picker">
-                        <input type="color" id="custom-color-main" name="custom-color-main" value="#A020F0"/>
+                        <ColorPicker />
                     </div>
                 </div>
                 <div className="color-block">
                     <label for="current-color-hit">Secondary (Hit): </label>
                     <div className="color-picker">
-                        <input type="color" id="custom-color-hit" name="custom-color-hit" value="#FFFF00"/>
+                        <ColorPicker />
                     </div>
                 </div>
                 <button type="submit" className="btn btn-secondary">Generate</button>
