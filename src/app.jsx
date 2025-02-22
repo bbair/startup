@@ -54,7 +54,14 @@ export default function App() {
                         />
                     } exact 
                     />
-                    <Route path='/play' element={<Play />} />
+                    <Route path='/play' element={
+                        <Play
+                            userName={userName}
+                            gridColor={gridColor}
+                            hitColor={hitColor}
+                        />
+                    }
+                    />
                     <Route path='/color_palette' element={
                         <ColorPalette
                             gridColor={gridColor}
