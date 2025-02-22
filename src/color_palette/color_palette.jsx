@@ -4,21 +4,19 @@ import { ColorPicker } from './color_picker';
 import { ColorDisplay } from './color_display';
 import './color_palette.css'
 
-export function ColorPalette() {
+export function ColorPalette(props) {
     const [customGridColor, setCustomGridColor] = React.useState('#008000');
     const [customHitColor, setCustomHitColor] = React.useState('#FF0000');
-    const [gridColor, setGridColor] = React.useState('#008000');
-    const [hitColor, setHitColor] = React.useState('#FF0000');
 
     function update_palette() {
-        setGridColor(customGridColor);
-        setHitColor(customHitColor);
+        props.onChangeGridColor(customGridColor);
+        props.onChangeHitColor(customHitColor);
     }
 
     function generate_palette() {
         // call API here to generate new palette
-        setCustomGridColor('#FFFFFF');
-        setCustomHitColor('#FFFFFF');
+        setCustomGridColor('#800080');
+        setCustomHitColor('#FFFF00');
     }
 
     return (
@@ -29,13 +27,13 @@ export function ColorPalette() {
                     <div className="color-block">
                         <label>Main (Grid): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={gridColor} />
+                            <ColorDisplay color={props.gridColor} />
                         </div>
                     </div>
                     <div className="color-block">
                         <label>Secondary (Hit): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={hitColor} />
+                            <ColorDisplay color={props.hitColor} />
                         </div>
                     </div>
                 </div>

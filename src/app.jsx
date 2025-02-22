@@ -12,6 +12,8 @@ export default function App() {
     const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
     const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
     const [authState, setAuthState] = React.useState(currentAuthState);
+    const [gridColor, setGridColor] = React.useState('#008000');
+    const [hitColor, setHitColor] = React.useState('#FF0000');
 
     return (
         <BrowserRouter>
@@ -49,10 +51,23 @@ export default function App() {
                                 setAuthState(authState);
                                 setUserName(userName);
                             }}
-                        />} exact 
+                        />
+                    } exact 
                     />
                     <Route path='/play' element={<Play />} />
-                    <Route path='/color_palette' element={<ColorPalette />} />
+                    <Route path='/color_palette' element={
+                        <ColorPalette
+                            gridColor={gridColor}
+                            onChangeGridColor={(newColor) => {
+                                setGridColor(newColor);
+                            }}
+                            hitColor={hitColor}
+                            onChangeHitColor={(newColor) => {
+                                setHitColor(newColor);
+                            }}
+                        />
+                    }
+                    />
                     <Route path='/about_rules' element={<AboutRules />} />
                     <Route path='*' element={<NotFound />} />
                 </Routes>

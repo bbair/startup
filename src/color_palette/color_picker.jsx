@@ -1,8 +1,6 @@
 import React from 'react';
 
 export function ColorPicker(props) {
-    // const [color, updateColor] = React.useState(customColor);
-
     function onChange(e) {
         props.onChangeColor(e.target.value);
     }
