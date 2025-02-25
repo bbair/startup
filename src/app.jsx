@@ -12,8 +12,8 @@ export default function App() {
     const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
     const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
     const [authState, setAuthState] = React.useState(currentAuthState);
-    const [gridColor, setGridColor] = React.useState('#008000');
-    const [hitColor, setHitColor] = React.useState('#FF0000');
+    const [gridColor, setGridColor] = React.useState(localStorage.getItem('gridColor') || '#008000');
+    const [hitColor, setHitColor] = React.useState(localStorage.getItem('hitColor') || '#FF0000');
 
     return (
         <BrowserRouter>

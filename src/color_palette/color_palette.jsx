@@ -9,6 +9,8 @@ export function ColorPalette(props) {
     const [customHitColor, setCustomHitColor] = React.useState('#FF0000');
 
     function update_palette() {
+        localStorage.setItem('gridColor', customGridColor);
+        localStorage.setItem('hitColor', customHitColor);
         props.onChangeGridColor(customGridColor);
         props.onChangeHitColor(customHitColor);
     }
