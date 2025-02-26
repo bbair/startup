@@ -3,6 +3,14 @@ import { Board } from './board';
 import './play.css';
 
 export function Play(props) {
+  const [allowPlayer, setAllowPlayer] = React.useState(false);
+  const [playerShipPositions, setPlayerShipPositions] = React.useState([]);
+  const [opponentShipPositions, setOpponentShipPositions] = React.useState([]);
+  const [playerHits, setPlayerHits] = React.useState([]);
+  const [opponentHits, setOpponentHits] = React.useState([]);
+  const [playerMisses, setPlayerMisses] = React.useState([]);
+  const [opponentMisses, setOpponentMisses] = React.useState([]);
+
   return (
     <main>
       <div>

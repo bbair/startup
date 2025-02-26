@@ -10,7 +10,6 @@ export function Board(props) {
         const rect = element.getBoundingClientRect();
         const x = event.clientX - rect.left - leftMargin;
         const y = event.clientY - rect.top;
-        console.log(`Click position relative to element: x=${x}, y=${y}`);
         console.log(`Grid position: x=${Math.round(x/30)}, y=${Math.round(y/30)}`)
     };
 
