@@ -3,6 +3,17 @@ import Button from 'react-bootstrap/Button';
 import { Grid } from './grid';
 
 export function Board(props) {
+    const leftMargin = 10;
+  
+    const handleClick = (event) => {
+        const element = event.currentTarget;
+        const rect = element.getBoundingClientRect();
+        const x = event.clientX - rect.left - leftMargin;
+        const y = event.clientY - rect.top;
+        console.log(`Click position relative to element: x=${x}, y=${y}`);
+        console.log(`Grid position: x=${Math.round(x/30)}, y=${Math.round(y/30)}`)
+    };
+
     return (
         <>
             <Button onClick={handleClick} variant=''>
