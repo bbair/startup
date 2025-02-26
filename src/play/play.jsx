@@ -14,31 +14,27 @@ export function Play(props) {
 
       <section className="text-center">
         <div>
-          <h3 className="green-text">Your Board</h3>
-          <svg width="320" height="320" xmlns="https://salvoattack.click/player-board">
+          <h4 className="green-text">Your Board</h4>
             <Board gridColor={props.gridColor} />
-            <ellipse rx="5" ry="10" cx="40" cy="40" fill={props.gridColor}/>
+            {/* <ellipse rx="5" ry="10" cx="40" cy="40" fill={props.gridColor}/>
             <ellipse rx="5" ry="10" cx="250" cy="190" fill={props.gridColor}/>
             <ellipse rx="5" ry="10" cx="100" cy="130" fill={props.gridColor}/>
             <ellipse rx="5" ry="10" cx="190" cy="70" fill={props.gridColor}/>
-            <ellipse rx="5" ry="10" cx="70" cy="280" fill={props.hitColor}/>
-          </svg>
+            <ellipse rx="5" ry="10" cx="70" cy="280" fill={props.hitColor}/> */}
         </div>
         <div>
-          <h3 className="green-text">Opponent's Board</h3>
-          <svg width="320" height="320" xmlns="https://salvoattack.click/opponent-board">
+          <h4 className="green-text">Opponent's Board</h4>
             <Board gridColor={props.gridColor} />
-            <ellipse rx="5" ry="10" cx="70" cy="40" fill={props.hitColor}/>
+            {/* <ellipse rx="5" ry="10" cx="70" cy="40" fill={props.hitColor}/>
             <ellipse rx="5" ry="10" cx="100" cy="280" fill="#FFFFFF"/>
             <ellipse rx="5" ry="10" cx="280" cy="130" fill={props.hitColor}/>
             <ellipse rx="5" ry="10" cx="160" cy="100" fill="#FFFFFF"/>
-            <ellipse rx="5" ry="10" cx="250" cy="250" fill="#FFFFFF"/>
-          </svg>
+            <ellipse rx="5" ry="10" cx="250" cy="250" fill="#FFFFFF"/> */}
         </div>
       </section>
 
       <div className="text-center legend-box  bg-secondary">
-        <h4>Legend</h4>
+        <h6>Legend</h6>
         <div className="legend-elements">
           <div className="element">
             <svg width="10" height="20" xmlns="https://salvoattack.click/ship">
