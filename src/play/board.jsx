@@ -19,10 +19,12 @@ export function Board(props) {
     };
 
     function placeMarker(x,y) {
-        const newMarkerMap = new Map();
-        markers.forEach((value,key) => {newMarkerMap.set(key,value)});
-        newMarkerMap.set(markerIndex, { x: x, y: y, color: props.gridColor });
-        setMarkers(newMarkerMap);
+        if (!markers.values().some(value => value.x === x && value.y === y)) {
+            const newMarkerMap = new Map();
+            markers.forEach((value,key) => {newMarkerMap.set(key,value)});
+            newMarkerMap.set(markerIndex, { x: x, y: y, color: props.gridColor });
+            setMarkers(newMarkerMap);
+        }
     }
  
     React.useEffect(() => {
