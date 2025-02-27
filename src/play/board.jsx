@@ -1,28 +1,47 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import { Grid } from './grid';
+import { Marker } from './marker';
 
 export function Board(props) {
     const leftMargin = 10;
+
+    const [markers, setMarkers] = React.useState(new Map());
+    const [markersArray, setMarkersArray] = React.useState(new Array());
+    const [markerIndex, setMarkerIndex] = React.useState(0);
   
     const handleClick = (event) => {
         const element = event.currentTarget;
         const rect = element.getBoundingClientRect();
-        const x = event.clientX - rect.left - leftMargin;
-        const y = event.clientY - rect.top;
-        console.log(`Grid position: x=${Math.round(x/30)}, y=${Math.round(y/30)}`)
+        const x = Math.round((event.clientX - rect.left - leftMargin)/30)*30;
+        const y = Math.round((event.clientY - rect.top)/30)*30;
+        placeMarker(x, y);
     };
+
+    function placeMarker(x,y) {
+        const newMarkerMap = new Map();
+        markers.forEach((value,key) => {newMarkerMap.set(key,value)});
+        newMarkerMap.set(markerIndex, { x: x, y: y, color: props.gridColor });
+        setMarkers(newMarkerMap);
+    }
+ 
+    React.useEffect(() => {
+        setMarkersArray(Array.from(markers, ([key, value]) => {
+            return <Marker key={key} x={value.x} y={value.y} color={value.color}></Marker>;
+        }));
+        console.log(markers)
+    }, [markers]);
+
+    React.useEffect(() => {
+        setMarkerIndex(markerIndex + 1);
+    }, [markers]);
 
     return (
         <>
             <Button onClick={handleClick} variant=''>
                 <svg width="300" height="300">
                     <Grid gridColor={props.gridColor} />
-                    {/* <ellipse rx="5" ry="10" cx="40" cy="40" fill={props.gridColor}/>
-                    <ellipse rx="5" ry="10" cx="250" cy="190" fill={props.gridColor}/>
-                    <ellipse rx="5" ry="10" cx="100" cy="130" fill={props.gridColor}/>
-                    <ellipse rx="5" ry="10" cx="190" cy="70" fill={props.gridColor}/>
-                    <ellipse rx="5" ry="10" cx="70" cy="280" fill={props.hitColor}/> */}
+                    <>{markersArray}</>
                 </svg>
             </Button>
         </>
