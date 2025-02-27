@@ -13,7 +13,7 @@ export function Board(props) {
         const rect = element.getBoundingClientRect();
         const x = Math.round((event.clientX - rect.left - leftMargin)/30)*30;
         const y = Math.round((event.clientY - rect.top)/30)*30;
-        if (!props.markers.values().some(value => value.x === x && value.y === y)) {
+        if (!props.markers.values().some(value => value.x === x && value.y === y) && x !== 0 && y !== 0) {
             props.onClick({x: x, y: y});
         }
     };
