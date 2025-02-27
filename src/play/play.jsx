@@ -5,12 +5,39 @@ import './play.css';
 
 export function Play(props) {
   const [allowPlayer, setAllowPlayer] = React.useState(false);
-  const [playerShipPositions, setPlayerShipPositions] = React.useState([]);
-  const [opponentShipPositions, setOpponentShipPositions] = React.useState([]);
-  const [playerHits, setPlayerHits] = React.useState([]);
-  const [opponentHits, setOpponentHits] = React.useState([]);
-  const [playerMisses, setPlayerMisses] = React.useState([]);
-  const [opponentMisses, setOpponentMisses] = React.useState([]);
+  const [playerShips, setPlayerShips] = React.useState(new Map());
+  const [opponentShipPositions, setOpponentShipPositions] = React.useState(new Map());
+  const [playerHits, setPlayerHits] = React.useState(new Map());
+  const [opponentHits, setOpponentHits] = React.useState(new Map());
+  const [playerMisses, setPlayerMisses] = React.useState(new Map());
+  const [opponentMisses, setOpponentMisses] = React.useState(new Map());
+  const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
+
+  function addShip(position) {
+    if (playerShips.size < 5) {
+      const newPlayerShips = new Map([...playerShips])
+      newPlayerShips.set(playerShips.size,{x: position.x, y: position.y, color: props.gridColor});
+      setPlayerShips(newPlayerShips);
+    }
+  }
+
+  function combineMaps(maps) {
+    const combinedMap = new Map();
+    let mapIndex = 0;
+    maps.forEach(map => {
+      map.forEach(value => {
+        if (!combinedMap.values().some(v => value.x === v.x && value.y === v.y)) {
+          combinedMap.set(mapIndex,value);
+          mapIndex += 1;
+        }
+      });
+    });
+    return combinedMap;
+  }
+
+  React.useEffect(() => {
+    setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
+  }, [playerShips, opponentHits, opponentMisses]);
 
   return (
     <main>
@@ -24,11 +51,20 @@ export function Play(props) {
       <section className="text-center">
         <div>
           <h4 className="green-text">Your Board</h4>
-          <Board gridColor={props.gridColor} />
+          <Board
+            markers={playerBoardMarkers}
+            gridColor={props.gridColor}
+            onClick={(position) => {
+                addShip(position);
+            }}
+          />
         </div>
         <div>
           <h4 className="green-text">Opponent's Board</h4>
-          <Board gridColor={props.gridColor} />
+          <Board
+            markers={new Map()}
+            gridColor={props.gridColor}
+          />
         </div>
       </section>
 
