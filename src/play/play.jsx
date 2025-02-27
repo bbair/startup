@@ -12,6 +12,16 @@ export function Play(props) {
   const [playerMisses, setPlayerMisses] = React.useState(new Map());
   const [opponentMisses, setOpponentMisses] = React.useState(new Map());
   const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
+  const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
+  const [attackCount, setAttackCount] = React.useState(0);
+
+  function addAttack(position) {
+    if (attackCount <= 5) {
+      const newPlayerMisses = new Map([...playerMisses])
+      newPlayerMisses.set(playerMisses.size,{x: position.x, y: position.y, color: '#FFFFFF'});
+      setPlayerMisses(newPlayerMisses);
+    }
+  }
 
   function addShip(position) {
     if (playerShips.size < 5) {
@@ -39,6 +49,14 @@ export function Play(props) {
     setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
   }, [playerShips, opponentHits, opponentMisses]);
 
+  React.useEffect(() => {
+    setOpponentBoardMarkers(combineMaps([playerHits,playerMisses]));
+  }, [playerHits, playerMisses]);
+  
+  React.useEffect(() => {
+    setAttackCount(attackCount + 1);
+  }, [playerMisses]);
+
   return (
     <main>
       <div>
@@ -55,15 +73,18 @@ export function Play(props) {
             markers={playerBoardMarkers}
             gridColor={props.gridColor}
             onClick={(position) => {
-                addShip(position);
+              addShip(position);
             }}
           />
         </div>
         <div>
           <h4 className="green-text">Opponent's Board</h4>
           <Board
-            markers={new Map()}
+            markers={opponentBoardMarkers}
             gridColor={props.gridColor}
+            onClick={(position) => {
+              addAttack(position);
+            }}
           />
         </div>
       </section>
