@@ -4,7 +4,9 @@ import { Legend } from './legend';
 import './play.css';
 
 export function Play(props) {
+  const [allowPlayer, setAllowPlayer] = React.useState(true);
   const [attackCount, setAttackCount] = React.useState(0);
+  const [message, setMessage] = React.useState('Place your ships');
   const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
   const [opponentHits, setOpponentHits] = React.useState(new Map());
   const [opponentMisses, setOpponentMisses] = React.useState(new Map());
@@ -16,11 +18,12 @@ export function Play(props) {
   const [playerShips, setPlayerShips] = React.useState(new Map());
 
   function addAttack(position) {
-    if (attackCount <= 5 && playerShips.size === 5) {
+    if (attackCount <= 5 && playerShips.size === 5 && allowPlayer) {
       setPlayerAttacks(previousAttacks => {
         const newPlayerAttacks = new Map(previousAttacks);
         newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
         if (attackCount === 5) {
+          setMessage('Waiting for opponent...')
           setTimeout(() => {
             // This will be replaced with a WebSocket message from the opponent's game
             const opponentAttacks = new Map([
@@ -63,6 +66,7 @@ export function Play(props) {
               });
             });
             setAttackCount(1);
+            setMessage('Choose where to attack');
           }, 1000);
         }
         return newPlayerAttacks;
@@ -75,6 +79,9 @@ export function Play(props) {
       const newPlayerShips = new Map([...playerShips])
       newPlayerShips.set(playerShips.size,{x: position.x, y: position.y, color: props.gridColor});
       setPlayerShips(newPlayerShips);
+      if (newPlayerShips.size === 5) {
+        setMessage('Choose where to attack');
+      }
     }
   }
 
@@ -106,7 +113,7 @@ export function Play(props) {
         [3, {x: 180, y: 240, color: props.gridColor}],
         [4, {x: 240, y: 270, color: props.gridColor}]
       ]));
-    }, 5000);
+    }, 3000);
   }, [])
 
   React.useEffect(() => {
@@ -122,19 +129,24 @@ export function Play(props) {
   }, [playerAttacks]);
 
   React.useEffect(() => {
-    if (playerHits.size === 5 || opponentHits.size === 5) {
-      setAttackCount(6);
+    if (playerHits.size === 5) {
+      setAllowPlayer(false);
+      setMessage('You won!!!');
+    }
+    if (opponentHits.size === 5) {
+      setAllowPlayer(false);
+      setMessage('You lost.');
     }
   }, [playerHits,opponentHits]);
 
   return (
     <main>
-      <div>
+      <div className="text-white-50">
         Player:
-        <span className="text-white-50">{props.userName}</span>
+        <span>{props.userName}</span>
       </div>
 
-      <br/>
+      <h4>{message}</h4>
 
       <section className="text-center">
         <div>

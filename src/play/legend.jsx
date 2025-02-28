@@ -3,7 +3,7 @@ import React from 'react';
 export function Legend(props) {
     return (
         <>
-            <div className="text-center legend-box  bg-secondary">
+            <div className="text-center legend-box bg-secondary">
                 <h6>Legend</h6>
                 <div className="legend-elements">
                     <div className="element">
