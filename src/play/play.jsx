@@ -22,8 +22,6 @@ export function Play(props) {
         newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
         if (attackCount === 5) {
           setTimeout(() => {
-            let opponentHitCount = 0;
-            let playerHitCount = 0;
             // This will be replaced with a WebSocket message from the opponent's game
             const opponentAttacks = new Map([
               [0, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
@@ -38,7 +36,6 @@ export function Play(props) {
                 if ([...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
                   newOpponentHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
                 }
-                opponentHitCount = newOpponentHits.size;
                 return newOpponentHits;
               });
               setOpponentMisses(previousMisses => {
@@ -55,7 +52,6 @@ export function Play(props) {
                 if ([...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
                   newPlayerHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
                 }
-                playerHitCount = newPlayerHits.size;
                 return newPlayerHits;
               });
               setPlayerMisses(previousMisses => {
