@@ -1,106 +1,177 @@
 import React from 'react';
-import './play.css'
+import { Board } from './board';
+import { Legend } from './legend';
+import './play.css';
 
-export function Play() {
+export function Play(props) {
+  const [allowPlayer, setAllowPlayer] = React.useState(true);
+  const [attackCount, setAttackCount] = React.useState(0);
+  const [message, setMessage] = React.useState('Place your ships');
+  const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
+  const [opponentHits, setOpponentHits] = React.useState(new Map());
+  const [opponentMisses, setOpponentMisses] = React.useState(new Map());
+  const [opponentShips, setOpponentShips] = React.useState(new Map());
+  const [playerAttacks, setPlayerAttacks] = React.useState(new Map());
+  const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
+  const [playerHits, setPlayerHits] = React.useState(new Map());
+  const [playerMisses, setPlayerMisses] = React.useState(new Map());
+  const [playerShips, setPlayerShips] = React.useState(new Map());
+
+  function addAttack(position) {
+    if (attackCount <= 5 && playerShips.size === 5 && allowPlayer) {
+      setPlayerAttacks(previousAttacks => {
+        const newPlayerAttacks = new Map(previousAttacks);
+        newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
+        if (attackCount === 5) {
+          setMessage('Waiting for opponent...')
+          setTimeout(() => {
+            // This will be replaced with a WebSocket message from the opponent's game
+            const opponentAttacks = new Map([
+              [0, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [1, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [2, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [3, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [4, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }]
+            ]);
+            opponentAttacks.forEach(attack => {
+              setOpponentHits(previousHits => {
+                const newOpponentHits = new Map(previousHits);
+                if ([...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newOpponentHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                }
+                return newOpponentHits;
+              });
+              setOpponentMisses(previousMisses => {
+                const newOpponentMisses = new Map(previousMisses);
+                if (![...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newOpponentMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
+                }
+                return newOpponentMisses;
+              });
+            });
+            newPlayerAttacks.forEach(attack => {
+              setPlayerHits(previousHits => {
+                const newPlayerHits = new Map(previousHits);
+                if ([...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newPlayerHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                }
+                return newPlayerHits;
+              });
+              setPlayerMisses(previousMisses => {
+                const newPlayerMisses = new Map(previousMisses);
+                if (![...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newPlayerMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
+                }
+                return newPlayerMisses;
+              });
+            });
+            setAttackCount(1);
+            setMessage('Choose where to attack');
+          }, 1000);
+        }
+        return newPlayerAttacks;
+      });
+    }
+  }  
+
+  function addShip(position) {
+    if (playerShips.size < 5) {
+      const newPlayerShips = new Map([...playerShips])
+      newPlayerShips.set(playerShips.size,{x: position.x, y: position.y, color: props.gridColor});
+      setPlayerShips(newPlayerShips);
+      if (newPlayerShips.size === 5) {
+        setMessage('Choose where to attack');
+      }
+    }
+  }
+
+  function combineMaps(maps) {
+    const combinedMap = new Map();
+    let mapIndex = 0;
+    maps.forEach(map => {
+      map.forEach(value => {
+        if (!combinedMap.values().some(v => value.x === v.x && value.y === v.y)) {
+          combinedMap.set(mapIndex,value);
+          mapIndex += 1;
+        }
+      });
+    });
+    return combinedMap;
+  }
+
+  function getRandomPosition() {
+    return Math.floor(Math.random() * (9 - 1 + 1) + 1)*30;
+  }
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      // This will be replaced with WebSocket message from the opponent's game
+      setOpponentShips(new Map([
+        [0, {x: 30, y: 30, color: props.gridColor}],
+        [1, {x: 150, y: 90, color: props.gridColor}],
+        [2, {x: 270, y: 150, color: props.gridColor}],
+        [3, {x: 180, y: 240, color: props.gridColor}],
+        [4, {x: 240, y: 270, color: props.gridColor}]
+      ]));
+    }, 3000);
+  }, [])
+
+  React.useEffect(() => {
+    setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
+  }, [playerShips, opponentHits, opponentMisses]);
+
+  React.useEffect(() => {
+    setOpponentBoardMarkers(combineMaps([playerHits,playerMisses,playerAttacks]));
+  }, [playerHits, playerMisses, playerAttacks]);
+  
+  React.useEffect(() => {
+    setAttackCount(attackCount + 1);
+  }, [playerAttacks]);
+
+  React.useEffect(() => {
+    if (playerHits.size === 5) {
+      setAllowPlayer(false);
+      setMessage('You won!!!');
+    }
+    if (opponentHits.size === 5) {
+      setAllowPlayer(false);
+      setMessage('You lost.');
+    }
+  }, [playerHits,opponentHits]);
+
   return (
     <main>
-      <div>
+      <div className="text-white-50">
         Player:
-        <span className="text-white-50">Ted E. Bair</span>
+        <span>{props.userName}</span>
       </div>
 
-      <br/>
+      <h4>{message}</h4>
 
       <section className="text-center">
         <div>
-          <h3 className="green-text">Your Board</h3>
-          <svg width="320" height="320" xmlns="https://salvoattack.click/player-board">
-            <rect width="300" height="300" x="10" y="10" stroke="#606060" stroke-width="3"/>
-            <line x1="10" y1="40" x2="310" y2="40" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="70" x2="310" y2="70" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="100" x2="310" y2="100" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="130" x2="310" y2="130" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="160" x2="310" y2="160" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="190" x2="310" y2="190" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="220" x2="310" y2="220" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="250" x2="310" y2="250" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="280" x2="310" y2="280" stroke="#008000" stroke-width="3"/>
-            <line x1="40" y1="10" x2="40" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="70" y1="10" x2="70" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="100" y1="10" x2="100" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="130" y1="10" x2="130" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="160" y1="10" x2="160" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="190" y1="10" x2="190" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="220" y1="10" x2="220" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="250" y1="10" x2="250" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="280" y1="10" x2="280" y2="310" stroke="#008000" stroke-width="3"/>
-            <ellipse rx="5" ry="10" cx="40" cy="40" fill="#008000"/>
-            <ellipse rx="5" ry="10" cx="250" cy="190" fill="#008000"/>
-            <ellipse rx="5" ry="10" cx="100" cy="130" fill="#008000"/>
-            <ellipse rx="5" ry="10" cx="190" cy="70" fill="#008000"/>
-            <ellipse rx="5" ry="10" cx="70" cy="280" fill="#FF0000"/>
-          </svg>
+          <h4 className="green-text">Your Board</h4>
+          <Board
+            markers={playerBoardMarkers}
+            gridColor={props.gridColor}
+            onClick={(position) => {
+              addShip(position);
+            }}
+          />
         </div>
         <div>
-          <h3 className="green-text">Opponent's Board</h3>
-          <svg width="320" height="320" xmlns="https://salvoattack.click/opponent-board">
-            <rect width="300" height="300" x="10" y="10" stroke="#606060" stroke-width="3"/>
-            <line x1="10" y1="40" x2="310" y2="40" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="70" x2="310" y2="70" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="100" x2="310" y2="100" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="130" x2="310" y2="130" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="160" x2="310" y2="160" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="190" x2="310" y2="190" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="220" x2="310" y2="220" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="250" x2="310" y2="250" stroke="#008000" stroke-width="3"/>
-            <line x1="10" y1="280" x2="310" y2="280" stroke="#008000" stroke-width="3"/>
-            <line x1="40" y1="10" x2="40" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="70" y1="10" x2="70" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="100" y1="10" x2="100" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="130" y1="10" x2="130" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="160" y1="10" x2="160" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="190" y1="10" x2="190" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="220" y1="10" x2="220" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="250" y1="10" x2="250" y2="310" stroke="#008000" stroke-width="3"/>
-            <line x1="280" y1="10" x2="280" y2="310" stroke="#008000" stroke-width="3"/>
-            <ellipse rx="5" ry="10" cx="70" cy="40" fill="#FF0000"/>
-            <ellipse rx="5" ry="10" cx="100" cy="280" fill="#FFFFFF"/>
-            <ellipse rx="5" ry="10" cx="280" cy="130" fill="#FF0000"/>
-            <ellipse rx="5" ry="10" cx="160" cy="100" fill="#FFFFFF"/>
-            <ellipse rx="5" ry="10" cx="250" cy="250" fill="#FFFFFF"/>
-          </svg>
+          <h4 className="green-text">Opponent's Board</h4>
+          <Board
+            markers={opponentBoardMarkers}
+            gridColor={props.gridColor}
+            onClick={(position) => {
+              addAttack(position);
+            }}
+          />
         </div>
       </section>
 
-      <div className="text-center legend-box  bg-secondary">
-        <h4>Legend</h4>
-        <div className="legend-elements">
-          <div className="element">
-            <svg width="10" height="20" xmlns="https://salvoattack.click/ship">
-              <ellipse rx="5" ry="10" cx="5" cy="10" fill="#008000"/>
-            </svg>
-          </div>
-          <div className="element">
-            <span>Ship</span>
-          </div>
-          <div className="element">
-            <svg width="10" height="20" xmlns="https://salvoattack.click/ship">
-              <ellipse rx="5" ry="10" cx="5" cy="10" fill="#FF0000"/>
-            </svg>
-          </div>
-          <div className="element">
-            <span>Hit</span>
-          </div>
-          <div className="element">
-            <svg width="10" height="20" xmlns="https://salvoattack.click/ship">
-              <ellipse rx="5" ry="10" cx="5" cy="10" fill="#FFFFFF"/>
-            </svg>
-          </div>
-          <div className="element">
-            <span>Miss</span>
-          </div>
-        </div>
-      </div>
+      <Legend gridColor={props.gridColor} hitColor={props.hitColor} />
     </main>
   );
 }

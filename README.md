@@ -67,3 +67,9 @@ For this deliverable, I did the following:
 - [x] **Bundled using Vite** - I bundled the application using Vite.
 - [x] **Multiple react components that contain your HTML and CSS** - I converted all my individual pages (login, play, color palette, and about/rules) to react components.
 - [x] **React router** - I implemented a react router in the app component to route between the different pages.
+
+## React Part 2: Reactivity Deliverable
+For this deliverable I used JavaScript and React so that the application completely works for a single user. I also added placeholders for future technology.
+
+- [ ] **Multiple react components that implement or mock all app functionality** - Everything works! Colors and login are stored in local storage. There is a spot to receive a color palette from an API call to generate a custom color palette. setTimeout is used to simulate getting the opponent's ship positions and attacks.
+- [ ] **React `useState` and `useEffect` hooks** - useState is used in the app, color_palette, unauthenticated, board, and play components. useEffect is used in the board and play components.
