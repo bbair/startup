@@ -4,24 +4,75 @@ import { Legend } from './legend';
 import './play.css';
 
 export function Play(props) {
-  const [allowPlayer, setAllowPlayer] = React.useState(false);
-  const [playerShips, setPlayerShips] = React.useState(new Map());
-  const [opponentShipPositions, setOpponentShipPositions] = React.useState(new Map());
-  const [playerHits, setPlayerHits] = React.useState(new Map());
-  const [opponentHits, setOpponentHits] = React.useState(new Map());
-  const [playerMisses, setPlayerMisses] = React.useState(new Map());
-  const [opponentMisses, setOpponentMisses] = React.useState(new Map());
-  const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
-  const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
   const [attackCount, setAttackCount] = React.useState(0);
+  const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
+  const [opponentHits, setOpponentHits] = React.useState(new Map());
+  const [opponentMisses, setOpponentMisses] = React.useState(new Map());
+  const [opponentShips, setOpponentShips] = React.useState(new Map());
+  const [playerAttacks, setPlayerAttacks] = React.useState(new Map());
+  const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
+  const [playerHits, setPlayerHits] = React.useState(new Map());
+  const [playerMisses, setPlayerMisses] = React.useState(new Map());
+  const [playerShips, setPlayerShips] = React.useState(new Map());
 
   function addAttack(position) {
-    if (attackCount <= 5) {
-      const newPlayerMisses = new Map([...playerMisses])
-      newPlayerMisses.set(playerMisses.size,{x: position.x, y: position.y, color: '#FFFFFF'});
-      setPlayerMisses(newPlayerMisses);
+    if (attackCount <= 5 && playerShips.size === 5) {
+      setPlayerAttacks(previousAttacks => {
+        const newPlayerAttacks = new Map(previousAttacks);
+        newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
+        if (attackCount === 5) {
+          setTimeout(() => {
+            let opponentHitCount = 0;
+            let playerHitCount = 0;
+            // This will be replaced with a WebSocket message from the opponent's game
+            const opponentAttacks = new Map([
+              [0, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [1, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [2, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [3, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
+              [4, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }]
+            ]);
+            opponentAttacks.forEach(attack => {
+              setOpponentHits(previousHits => {
+                const newOpponentHits = new Map(previousHits);
+                if ([...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newOpponentHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                }
+                opponentHitCount = newOpponentHits.size;
+                return newOpponentHits;
+              });
+              setOpponentMisses(previousMisses => {
+                const newOpponentMisses = new Map(previousMisses);
+                if (![...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newOpponentMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
+                }
+                return newOpponentMisses;
+              });
+            });
+            newPlayerAttacks.forEach(attack => {
+              setPlayerHits(previousHits => {
+                const newPlayerHits = new Map(previousHits);
+                if ([...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newPlayerHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                }
+                playerHitCount = newPlayerHits.size;
+                return newPlayerHits;
+              });
+              setPlayerMisses(previousMisses => {
+                const newPlayerMisses = new Map(previousMisses);
+                if (![...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
+                  newPlayerMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
+                }
+                return newPlayerMisses;
+              });
+            });
+            setAttackCount(1);
+          }, 1000);
+        }
+        return newPlayerAttacks;
+      });
     }
-  }
+  }  
 
   function addShip(position) {
     if (playerShips.size < 5) {
@@ -45,17 +96,40 @@ export function Play(props) {
     return combinedMap;
   }
 
+  function getRandomPosition() {
+    return Math.floor(Math.random() * (9 - 1 + 1) + 1)*30;
+  }
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      // This will be replaced with WebSocket message from the opponent's game
+      setOpponentShips(new Map([
+        [0, {x: 30, y: 30, color: props.gridColor}],
+        [1, {x: 150, y: 90, color: props.gridColor}],
+        [2, {x: 270, y: 150, color: props.gridColor}],
+        [3, {x: 180, y: 240, color: props.gridColor}],
+        [4, {x: 240, y: 270, color: props.gridColor}]
+      ]));
+    }, 5000);
+  }, [])
+
   React.useEffect(() => {
     setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
   }, [playerShips, opponentHits, opponentMisses]);
 
   React.useEffect(() => {
-    setOpponentBoardMarkers(combineMaps([playerHits,playerMisses]));
-  }, [playerHits, playerMisses]);
+    setOpponentBoardMarkers(combineMaps([playerHits,playerMisses,playerAttacks]));
+  }, [playerHits, playerMisses, playerAttacks]);
   
   React.useEffect(() => {
     setAttackCount(attackCount + 1);
-  }, [playerMisses]);
+  }, [playerAttacks]);
+
+  React.useEffect(() => {
+    if (playerHits.size === 5 || opponentHits.size === 5) {
+      setAttackCount(6);
+    }
+  }, [playerHits,opponentHits]);
 
   return (
     <main>
