@@ -73,3 +73,12 @@ For this deliverable I used JavaScript and React so that the application complet
 
 - [x] **Multiple react components that implement or mock all app functionality** - Everything works! Colors and login are stored in local storage. There is a spot to receive a color palette from an API call to generate a custom color palette. setTimeout is used to simulate getting the opponent's ship positions and attacks.
 - [x] **React `useState` and `useEffect` hooks** - useState is used in the app, color_palette, unauthenticated, board, and play components. useEffect is used in the board and play components.
+
+## Service Deliverable
+
+-[ ] **Node.js/Express HTTP service** - 
+-[ ] **Static middleware for frontend** - 
+-[ ] **Calls to third party endpoints** - 
+-[ ] **Backend service endpoints** - 
+-[ ] **Frontend calls service endpoints** - 
+-[ ] **Supports registration, login, logout, and restricted endpoint** - 
