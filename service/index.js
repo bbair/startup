@@ -58,6 +58,18 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
+// GetColors
+apiRouter.get('/colors', verifyAuth, async (req, res) => {
+  const colors = await findUserColors('user', req.cookies[authCookieName]);
+  res.send(colors);
+});
+
+// SaveColors
+apiRouter.post('/colors', verifyAuth, (req, res) => {
+  updateColors(req.body, req.cookies[authCookieName]);
+  res.end();
+});
+
 // Default error handler
 app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
@@ -67,12 +79,6 @@ app.use(function (err, req, res, next) {
 app.use((_req, res) => {
   res.sendFile('index.html', { root: 'public' });
 });
-
-async function findUser(field, value) {
-  if (!value) return null;
-
-  return users.find((u) => u[field] === value);
-}
 
 async function createUser(email, password) {
   const passwordHash = await bcrypt.hash(password, 10);
@@ -87,6 +93,18 @@ async function createUser(email, password) {
   return user;
 }
 
+async function findUser(field, value) {
+  if (!value) return null;
+
+  return users.find((u) => u[field] === value);
+}
+
+async function findUserColors(field, value) {
+  if (!value) return null;
+
+  return colors.find((c) => c[field] === value);
+}
+
 // setAuthCookie in the HTTP response
 function setAuthCookie(res, authToken) {
   res.cookie(authCookieName, authToken, {
@@ -95,6 +113,20 @@ function setAuthCookie(res, authToken) {
     sameSite: 'strict',
   });
 }
+
+function updateColors(newColors, user) {
+  colors.push({ colors: newColors, user: user })
+}
+
+// Middleware to verify that the user is authorized to call an endpoint
+const verifyAuth = async (req, res, next) => {
+  const user = await findUser('token', req.cookies[authCookieName]);
+  if (user) {
+    next();
+  } else {
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+};
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
