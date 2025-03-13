@@ -9,7 +9,7 @@ const authCookieName = 'token';
 // The users, colors, and positions are saved in memory and disappear whenever the service is restarted.
 let users = [];
 let colors = [];
-let positions = [];
+let ships = [];
 
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
@@ -58,6 +58,25 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
+// SaveShipPositions
+apiRouter.post('/ships', verifyAuth, async (req, res) => {
+  await saveShips(req.body.positions, req.cookies[authCookieName]);
+  res.end();
+});
+
+// GetShipPositions
+apiRouter.get('/ships/player', verifyAuth, async (req, res) => {
+  const playerShips = await getShips('user', req.cookies[authCookieName]);
+  res.send(playerShips);
+});
+
+// GetOpponentPositions
+apiRouter.get('/ships/opponent', verifyAuth, async (req, res) => {
+  const opponent = await findOpponent('user', req.cookies[authCookieName]);
+  const opponentShips = await getShips('user', opponent[authCookieName]);
+  res.send(opponentShips);
+});
+
 // GetColors
 apiRouter.get('/colors', verifyAuth, async (req, res) => {
   const colors = await findUserColors('user', req.cookies[authCookieName]);
@@ -65,7 +84,7 @@ apiRouter.get('/colors', verifyAuth, async (req, res) => {
 });
 
 // SaveColors
-apiRouter.post('/colors', verifyAuth, (req, res) => {
+apiRouter.post('/colors/update', verifyAuth, (req, res) => {
   updateColors(req.body, req.cookies[authCookieName]);
   res.end();
 });
@@ -93,6 +112,12 @@ async function createUser(email, password) {
   return user;
 }
 
+async function findOpponent(field, value) {
+  if (!value) return null;
+
+  return users.find((u) => u[field] === value)['opponent'];
+}
+
 async function findUser(field, value) {
   if (!value) return null;
 
@@ -103,6 +128,19 @@ async function findUserColors(field, value) {
   if (!value) return null;
 
   return colors.find((c) => c[field] === value);
+}
+
+async function getShips(field, value) {
+  if (!value) return null;
+
+  return ships.find((s) => s[field] === value)['positions'];
+}
+
+async function saveShips(newShips, token) {
+  ships.push({
+    'token': token,
+    'positions': newShips
+  })
 }
 
 // setAuthCookie in the HTTP response
