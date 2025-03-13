@@ -58,6 +58,12 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
+// SetOpponent
+apiRouter.post('/opponent', verifyAuth, async (req, res) => {
+  await setOpponent(req.body.opponent, req.cookies[authCookieName]);
+  res.end();
+});
+
 // SaveShipPositions
 apiRouter.post('/ships', verifyAuth, async (req, res) => {
   await saveShips(req.body.positions, req.cookies[authCookieName]);
@@ -150,6 +156,10 @@ function setAuthCookie(res, authToken) {
     httpOnly: true,
     sameSite: 'strict',
   });
+}
+
+async function setOpponent(opponent, user) {
+  users.find((u) => u[authCookieName] === user)['opponent'] = opponent;
 }
 
 function updateColors(newColors, user) {
