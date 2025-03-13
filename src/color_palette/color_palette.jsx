@@ -15,10 +15,19 @@ export function ColorPalette(props) {
         props.onChangeHitColor(customHitColor);
     }
 
-    function generate_palette() {
-        // call API here to generate new palette
-        setCustomGridColor('#800080');
-        setCustomHitColor('#FFFF00');
+    async function generate_palette() {
+        setCustomGridColor(await get_random_color(generate_random_seed()));
+        setCustomHitColor(await get_random_color(generate_random_seed()));
+    }
+
+    function generate_random_seed() {
+        return Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    }
+
+    async function get_random_color(seed) {
+        const response = await fetch(`https://www.thecolorapi.com/scheme?hex=${seed}&mode=analogic&count=1`);
+        const data = await response.json();
+        return data.colors[0].hex.value
     }
 
     return (
