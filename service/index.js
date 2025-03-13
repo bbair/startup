@@ -58,12 +58,6 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
-// SetOpponent
-apiRouter.post('/opponent', verifyAuth, async (req, res) => {
-  await setOpponent(req.body.opponent, req.cookies[authCookieName]);
-  res.end();
-});
-
 // SaveShipPositions
 apiRouter.post('/ships', verifyAuth, async (req, res) => {
   await saveShips(req.body.positions, req.cookies[authCookieName]);
@@ -78,8 +72,22 @@ apiRouter.get('/ships/player', verifyAuth, async (req, res) => {
 
 // GetOpponentPositions
 apiRouter.get('/ships/opponent', verifyAuth, async (req, res) => {
-  const opponent = await findOpponent('user', req.cookies[authCookieName]);
+  let opponent = await findOpponent('user', req.cookies[authCookieName]);
+  // set an opponent if there's not one
+  if (!opponent) {
+    opponent = await findAvailablePlayer();
+    if (!opponent) {
+      // send back an error that there are no available players
+      res.status(500).send({ msg: 'No available players' });
+    } else {
+      // set both users' opponents to each other
+      await setOpponent(opponent, req.cookies[authCookieName]);
+    }
+  }
   const opponentShips = await getShips('user', opponent[authCookieName]);
+  if (!opponentShips) {
+    res.status(500).send({ msg: 'Opponent has not placed their ships yet' });
+  }
   res.send(opponentShips);
 });
 
@@ -112,10 +120,15 @@ async function createUser(email, password) {
     email: email,
     password: passwordHash,
     token: uuid.v4(),
+    opponent: null,
   };
   users.push(user);
 
   return user;
+}
+
+async function findAvailablePlayer() {
+  return users.find((u) => u.token && u.opponent === null)[authCookieName];
 }
 
 async function findOpponent(field, value) {
@@ -160,6 +173,7 @@ function setAuthCookie(res, authToken) {
 
 async function setOpponent(opponent, user) {
   users.find((u) => u[authCookieName] === user)['opponent'] = opponent;
+  users.find((u) => u[authCookieName] === opponent)['opponent'] = user;
 }
 
 function updateColors(newColors, user) {
