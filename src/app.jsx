@@ -32,9 +32,13 @@ export default function App() {
                                 </NavLink>
                                 </li>
                             )}
-                            <li className="nav-item">
-                                <NavLink className='nav-link' to='color_palette'>Color Palette</NavLink>
-                            </li>
+                            {authState === AuthState.Authenticated && (
+                                <li className="nav-item">
+                                    <NavLink className='nav-link' to='color_palette'>
+                                        Color Palette
+                                    </NavLink>
+                                </li>
+                            )}
                             <li className="nav-item">
                                 <NavLink className='nav-link' to='about_rules'>About/Rules</NavLink>
                             </li>
