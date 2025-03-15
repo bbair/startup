@@ -9,8 +9,6 @@ export function ColorPalette(props) {
     const [customHitColor, setCustomHitColor] = React.useState('#FF0000');
 
     function update_palette() {
-        localStorage.setItem('gridColor', customGridColor);
-        localStorage.setItem('hitColor', customHitColor);
         props.onChangeGridColor(customGridColor);
         props.onChangeHitColor(customHitColor);
     }
@@ -38,13 +36,13 @@ export function ColorPalette(props) {
                     <div className="color-block">
                         <label>Main (Grid): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={props.gridColor} />
+                            <ColorDisplay color={props.gridColor? props.gridColor : '#008000'} />
                         </div>
                     </div>
                     <div className="color-block">
                         <label>Secondary (Hit): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={props.hitColor} />
+                            <ColorDisplay color={props.hitColor? props.hitColor : '#FF0000'} />
                         </div>
                     </div>
                 </div>

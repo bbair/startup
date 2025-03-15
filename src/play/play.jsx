@@ -37,7 +37,11 @@ export function Play(props) {
               setOpponentHits(previousHits => {
                 const newOpponentHits = new Map(previousHits);
                 if ([...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newOpponentHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                  newOpponentHits.set(previousHits.size, {
+                    x: attack.x,
+                    y: attack.y,
+                    color: props.hitColor? props.hitColor : '#FF0000'
+                  });
                 }
                 return newOpponentHits;
               });
@@ -53,7 +57,11 @@ export function Play(props) {
               setPlayerHits(previousHits => {
                 const newPlayerHits = new Map(previousHits);
                 if ([...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newPlayerHits.set(previousHits.size, { x: attack.x, y: attack.y, color: props.hitColor });
+                  newPlayerHits.set(previousHits.size, {
+                    x: attack.x,
+                    y: attack.y,
+                    color: props.hitColor? props.hitColor : '#FF0000'
+                  });
                 }
                 return newPlayerHits;
               });
@@ -77,7 +85,11 @@ export function Play(props) {
   function addShip(position) {
     if (playerShips.size < 5) {
       const newPlayerShips = new Map([...playerShips])
-      newPlayerShips.set(playerShips.size,{x: position.x, y: position.y, color: props.gridColor});
+      newPlayerShips.set(playerShips.size,{
+        x: position.x,
+        y: position.y,
+        color: props.gridColor? props.gridColor : '#008000'
+      });
       setPlayerShips(newPlayerShips);
       if (newPlayerShips.size === 5) {
         setMessage('Choose where to attack');
@@ -107,11 +119,11 @@ export function Play(props) {
     setTimeout(() => {
       // This will be replaced with WebSocket message from the opponent's game
       setOpponentShips(new Map([
-        [0, {x: 30, y: 30, color: props.gridColor}],
-        [1, {x: 150, y: 90, color: props.gridColor}],
-        [2, {x: 270, y: 150, color: props.gridColor}],
-        [3, {x: 180, y: 240, color: props.gridColor}],
-        [4, {x: 240, y: 270, color: props.gridColor}]
+        [0, {x: 30, y: 30, color: props.gridColor? props.gridColor : '#008000'}],
+        [1, {x: 150, y: 90, color: props.gridColor? props.gridColor : '#008000'}],
+        [2, {x: 270, y: 150, color: props.gridColor? props.gridColor : '#008000'}],
+        [3, {x: 180, y: 240, color: props.gridColor? props.gridColor : '#008000'}],
+        [4, {x: 240, y: 270, color: props.gridColor? props.gridColor : '#008000'}]
       ]));
     }, 3000);
   }, [])
@@ -153,7 +165,7 @@ export function Play(props) {
           <h4 className="green-text">Your Board</h4>
           <Board
             markers={playerBoardMarkers}
-            gridColor={props.gridColor}
+            gridColor={props.gridColor? props.gridColor : '#008000'}
             onClick={(position) => {
               addShip(position);
             }}
@@ -163,7 +175,7 @@ export function Play(props) {
           <h4 className="green-text">Opponent's Board</h4>
           <Board
             markers={opponentBoardMarkers}
-            gridColor={props.gridColor}
+            gridColor={props.gridColor? props.gridColor : '#008000'}
             onClick={(position) => {
               addAttack(position);
             }}
@@ -171,7 +183,10 @@ export function Play(props) {
         </div>
       </section>
 
-      <Legend gridColor={props.gridColor} hitColor={props.hitColor} />
+      <Legend
+        gridColor={props.gridColor? props.gridColor : '#008000'}
+        hitColor={props.hitColor? props.hitColor : '#FF0000'}
+      />
     </main>
   );
 }

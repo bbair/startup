@@ -12,8 +12,39 @@ export default function App() {
     const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
     const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
     const [authState, setAuthState] = React.useState(currentAuthState);
-    const [gridColor, setGridColor] = React.useState(localStorage.getItem('gridColor') || '#008000');
-    const [hitColor, setHitColor] = React.useState(localStorage.getItem('hitColor') || '#FF0000');
+    const [gridColor, setGridColor] = React.useState(undefined);
+    const [hitColor, setHitColor] = React.useState(undefined);
+    
+    React.useEffect(() => {
+        async function getColors() {
+            const response = await fetch(`/api/colors`);
+            if (response?.status === 200) {
+                const data = await response.json();
+                setGridColor(data.gridColor)
+                setHitColor(data.hitColor)
+            } else {
+                setGridColor('#008000')
+                setHitColor('#FF0000')
+            }
+        }
+        getColors();
+    }, []);
+
+    React.useEffect(() => {
+        async function updateColors() {
+            await fetch('/api/colors/update', {
+                method: 'post',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    'gridColor': gridColor,
+                    'hitColor': hitColor
+                }),
+            });
+        }
+        if (gridColor && hitColor && currentAuthState === AuthState.Authenticated) {
+            updateColors();
+        }
+    }, [gridColor, hitColor]);
 
     return (
         <BrowserRouter>
@@ -69,11 +100,11 @@ export default function App() {
                     <Route path='/color_palette' element={
                         <ColorPalette
                             gridColor={gridColor}
-                            onChangeGridColor={(newColor) => {
+                            onChangeGridColor={async (newColor) => {
                                 setGridColor(newColor);
                             }}
                             hitColor={hitColor}
-                            onChangeHitColor={(newColor) => {
+                            onChangeHitColor={async (newColor) => {
                                 setHitColor(newColor);
                             }}
                         />

@@ -134,6 +134,15 @@ async function createUser(email, password) {
   };
   users.push(user);
 
+  // set colors to default
+  colors.push({
+    'user': user.token,
+    'colors': {
+      'gridColor': '#008000',
+      'hitColor': '#FF0000',
+    }
+  })
+
   return user;
 }
 
@@ -144,7 +153,7 @@ async function findAvailablePlayer() {
 async function findOpponent(field, value) {
   if (!value) return null;
 
-  return users.find((u) => u[field] === value)['opponent'];
+  return users.find((u) => u[field] === value).opponent;
 }
 
 async function findUser(field, value) {
@@ -154,15 +163,15 @@ async function findUser(field, value) {
 }
 
 async function findUserColors(field, value) {
-  if (!value) return null;
+  if (!value || !colors) return null;
 
-  return colors.find((c) => c[field] === value);
+  return colors.find((c) => c[field] === value).colors;
 }
 
 async function getShips(field, value) {
   if (!value) return null;
 
-  return ships.find((s) => s[field] === value)['positions'];
+  return ships.find((s) => s[field] === value).positions;
 }
 
 async function saveShips(newShips, token) {
@@ -182,12 +191,12 @@ function setAuthCookie(res, authToken) {
 }
 
 async function setOpponent(opponent, user) {
-  users.find((u) => u[authCookieName] === user)['opponent'] = opponent;
-  users.find((u) => u[authCookieName] === opponent)['opponent'] = user;
+  users.find((u) => u[authCookieName] === user).opponent = opponent;
+  users.find((u) => u[authCookieName] === opponent).opponent = user;
 }
 
 function updateColors(newColors, user) {
-  colors.push({ colors: newColors, user: user })
+  colors.find((c) => c['user'] === user).colors = newColors;
 }
 
 app.listen(port, () => {
