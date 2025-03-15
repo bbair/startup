@@ -76,9 +76,9 @@ For this deliverable I used JavaScript and React so that the application complet
 
 ## Service Deliverable
 
--[ ] **Node.js/Express HTTP service** - 
--[ ] **Static middleware for frontend** - 
--[ ] **Calls to third party endpoints** - 
--[ ] **Backend service endpoints** - 
--[ ] **Frontend calls service endpoints** - 
--[ ] **Supports registration, login, logout, and restricted endpoint** - 
+-[x] **Node.js/Express HTTP service** - Installed Express with NPM. Default port on 3000.
+-[x] **Static middleware for frontend** - Simple endpoints in service/index.
+-[x] **Calls to third party endpoints** - Call to third party endpoint to get random colors for the palette in color_palette.jsx.
+-[ ] **Backend service endpoints** - Simple endpoints in service/index for auth, getting an opponent, setting and getting ship positions, attacks and colors.
+-[ ] **Frontend calls service endpoints** - All mocked functionality removed from the frontend and replaced with calls to the service.
+-[x] **Supports registration, login, logout, and restricted endpoint** - Fully support authentication and restrict access to playing and changing the color palette.
