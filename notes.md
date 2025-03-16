@@ -11,6 +11,9 @@
 > How to deploy the website (post-react):
 > ./deployReact.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
 
+> How to deploy the website (post-service):
+> ./deployService.sh -k path/to/key/pair -h salvoattack.click -s simon (or startup)
+
 # CSS
 - Use `<link rel="stylesheet" href="styles.css" />` in head element to link external css file to html
 - Change `box-sizing` from `content-box` to `border-box` to include border and padding in size

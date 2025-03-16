@@ -9,16 +9,23 @@ export function ColorPalette(props) {
     const [customHitColor, setCustomHitColor] = React.useState('#FF0000');
 
     function update_palette() {
-        localStorage.setItem('gridColor', customGridColor);
-        localStorage.setItem('hitColor', customHitColor);
         props.onChangeGridColor(customGridColor);
         props.onChangeHitColor(customHitColor);
     }
 
-    function generate_palette() {
-        // call API here to generate new palette
-        setCustomGridColor('#800080');
-        setCustomHitColor('#FFFF00');
+    async function generate_palette() {
+        setCustomGridColor(await get_random_color(generate_random_seed()));
+        setCustomHitColor(await get_random_color(generate_random_seed()));
+    }
+
+    function generate_random_seed() {
+        return Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    }
+
+    async function get_random_color(seed) {
+        const response = await fetch(`https://www.thecolorapi.com/scheme?hex=${seed}&mode=analogic&count=1`);
+        const data = await response.json();
+        return data.colors[0].hex.value
     }
 
     return (
@@ -29,13 +36,13 @@ export function ColorPalette(props) {
                     <div className="color-block">
                         <label>Main (Grid): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={props.gridColor} />
+                            <ColorDisplay color={props.gridColor? props.gridColor : '#008000'} />
                         </div>
                     </div>
                     <div className="color-block">
                         <label>Secondary (Hit): </label>
                         <div className="color-picker">
-                            <ColorDisplay color={props.hitColor} />
+                            <ColorDisplay color={props.hitColor? props.hitColor : '#FF0000'} />
                         </div>
                     </div>
                 </div>
