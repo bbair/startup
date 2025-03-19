@@ -82,3 +82,8 @@ For this deliverable I used JavaScript and React so that the application complet
 - [x] **Backend service endpoints** - Simple endpoints in service/index for auth and setting and getting colors.
 - [x] **Frontend calls service endpoints** - All mocked functionality removed from the frontend and replaced with calls to the service.
 - [x] **Supports registration, login, logout, and restricted endpoint** - Fully support authentication and restrict access to playing and changing the color palette.
+
+## DB Deliverable
+
+- [ ] **Store application data in MongoDB** - 
+- [ ] **Store and retrieve credentials in MongoDB** - 
