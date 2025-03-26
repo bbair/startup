@@ -7,8 +7,6 @@ const DB = require('./database.js');
 
 const authCookieName = 'token';
 
-// The users and colors are saved in memory and disappear whenever the service is restarted.
-let users = [];
 let colors = [];
 
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -50,6 +48,8 @@ apiRouter.post('/auth/login', async (req, res) => {
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
+      await DB.updateUser(user);
+      // update colors, too
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
       return;
@@ -63,6 +63,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   const user = await findUser('token', req.cookies[authCookieName]);
   if (user) {
     delete user.token;
+    DB.updateUser(user);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
@@ -99,7 +100,7 @@ async function createUser(email, password) {
     token: uuid.v4(),
     opponent: null,
   };
-  users.push(user);
+  await DB.addUser(user);
 
   // set colors to default
   colors.push({
@@ -116,7 +117,10 @@ async function createUser(email, password) {
 async function findUser(field, value) {
   if (!value) return null;
 
-  return users.find((u) => u[field] === value);
+  if (field === 'token') {
+    return DB.getUserByToken(value);
+  }
+  return DB.getUser(value);
 }
 
 async function findUserColors(field, value) {
