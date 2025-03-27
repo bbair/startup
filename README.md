@@ -85,5 +85,5 @@ For this deliverable I used JavaScript and React so that the application complet
 
 ## DB Deliverable
 
-- [ ] **Store application data in MongoDB** - 
-- [ ] **Store and retrieve credentials in MongoDB** - 
+- [x] **Store application data in MongoDB** - Stores custom palette in MongoDB.
+- [x] **Store and retrieve credentials in MongoDB** - Stores users and their authentication tokens in MongoDB.
