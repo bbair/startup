@@ -7,8 +7,6 @@ const DB = require('./database.js');
 
 const authCookieName = 'token';
 
-let colors = [];
-
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
@@ -47,9 +45,10 @@ apiRouter.post('/auth/login', async (req, res) => {
   const user = await findUser('email', req.body.email);
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
+      const oldToken = user.token;
       user.token = uuid.v4();
       await DB.updateUser(user);
-      // update colors, too
+      await DB.updateColorsWithToken(oldToken, user.token)
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
       return;
@@ -71,13 +70,13 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 
 // GetColors
 apiRouter.get('/colors', verifyAuth, async (req, res) => {
-  const colors = await findUserColors('user', req.cookies[authCookieName]);
+  const colors = await findUserColors(req.cookies[authCookieName]);
   res.send(colors);
 });
 
 // SaveColors
-apiRouter.post('/colors/update', verifyAuth, (req, res) => {
-  updateColors(req.body, req.cookies[authCookieName]);
+apiRouter.post('/colors/update', verifyAuth, async (req, res) => {
+  await updateColors(req.body, req.cookies[authCookieName]);
   res.end();
 });
 
@@ -103,13 +102,14 @@ async function createUser(email, password) {
   await DB.addUser(user);
 
   // set colors to default
-  colors.push({
-    'user': user.token,
-    'colors': {
-      'gridColor': '#008000',
-      'hitColor': '#FF0000',
+  const colors = {
+    user: user.token,
+    colors: {
+      gridColor: '#008000',
+      hitColor: '#FF0000',
     }
-  })
+  };
+  await DB.addColors(colors)
 
   return user;
 }
@@ -123,10 +123,10 @@ async function findUser(field, value) {
   return DB.getUser(value);
 }
 
-async function findUserColors(field, value) {
-  if (!value || !colors) return null;
-
-  return colors.find((c) => c[field] === value).colors;
+async function findUserColors(token) {
+  if (!token) return null;
+  
+  return DB.getColors(token);
 }
 
 // setAuthCookie in the HTTP response
@@ -138,8 +138,13 @@ function setAuthCookie(res, authToken) {
   });
 }
 
-function updateColors(newColors, user) {
-  colors.find((c) => c['user'] === user).colors = newColors;
+async function updateColors(colors, user) {
+  const newColors = {
+    user: user,
+    colors: colors,
+  }
+
+  await DB.updateColors(newColors);
 }
 
 app.listen(port, () => {
