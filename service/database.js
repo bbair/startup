@@ -18,11 +18,11 @@ const colorCollection = db.collection('color');
 })();
 
 function getUser(email) {
-    return userCollection.findOne({ email: email });
+    return userCollection.findOne({ email: email }).then(user => user);
 }
 
 function getUserByToken(token) {
-    return userCollection.findOne({ token: token });
+    return userCollection.findOne({ token: token }).then(user => user);
 }
 
 async function addUser(user) {
@@ -33,8 +33,8 @@ async function updateUser(user) {
     await userCollection.updateOne({ email: user.email }, { $set: user });
 }
 
-async function getColors(token) {
-    return (await colorCollection.findOne({ user: token })).colors;
+function getColors(user) {
+    return colorCollection.findOne({ user: user }).then(colorsCollectionObject => colorsCollectionObject.colors);
 }
 
 async function addColors(colors) {
@@ -45,10 +45,6 @@ async function updateColors(colors) {
     await colorCollection.updateOne({ user: colors.user }, { $set: colors });
 }
 
-async function updateColorsWithToken(oldToken, newToken) {
-    await colorCollection.updateOne({ user: oldToken }, { $set: { user: newToken } });
-}
-
 module.exports = {
     getUser,
     getUserByToken,
@@ -57,5 +53,4 @@ module.exports = {
     getColors,
     addColors,
     updateColors,
-    updateColorsWithToken,
 };
