@@ -45,10 +45,8 @@ apiRouter.post('/auth/login', async (req, res) => {
   const user = await findUser('email', req.body.email);
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
-      const oldToken = user.token;
       user.token = uuid.v4();
       await DB.updateUser(user);
-      await DB.updateColorsWithToken(oldToken, user.token)
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
       return;
@@ -70,13 +68,15 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 
 // GetColors
 apiRouter.get('/colors', verifyAuth, async (req, res) => {
-  const colors = await findUserColors(req.cookies[authCookieName]);
+  const user = await findUser('token', req.cookies[authCookieName]);
+  const colors = await findUserColors(user.email);
   res.send(colors);
 });
 
 // SaveColors
 apiRouter.post('/colors/update', verifyAuth, async (req, res) => {
-  await updateColors(req.body, req.cookies[authCookieName]);
+  const user = await findUser('token', req.cookies[authCookieName]);
+  await updateColors(req.body, user.email);
   res.end();
 });
 
@@ -103,7 +103,7 @@ async function createUser(email, password) {
 
   // set colors to default
   const colors = {
-    user: user.token,
+    user: user.email,
     colors: {
       gridColor: '#008000',
       hitColor: '#FF0000',
@@ -123,10 +123,10 @@ async function findUser(field, value) {
   return DB.getUser(value);
 }
 
-async function findUserColors(token) {
-  if (!token) return null;
+async function findUserColors(user) {
+  if (!user) return null;
   
-  return DB.getColors(token);
+  return DB.getColors(user);
 }
 
 // setAuthCookie in the HTTP response

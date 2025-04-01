@@ -16,19 +16,25 @@ export default function App() {
     const [hitColor, setHitColor] = React.useState(undefined);
     
     React.useEffect(() => {
-        async function getColors() {
-            const response = await fetch(`/api/colors`);
-            if (response?.status === 200) {
-                const data = await response.json();
-                setGridColor(data.gridColor)
-                setHitColor(data.hitColor)
-            } else {
-                setGridColor('#008000')
-                setHitColor('#FF0000')
+        if (authState === AuthState.Authenticated) {
+            async function getColors() {
+                const response = await fetch(`/api/colors`);
+                if (response?.status === 200) {
+                    const data = await response.json();
+                    setGridColor(data.gridColor);
+                    setHitColor(data.hitColor);
+                } else {
+                    setDefaultColors();
+                }
             }
+            getColors();
         }
-        getColors();
-    }, []);
+    }, [ authState ]);
+
+    function setDefaultColors() {
+        setGridColor('#008000');
+        setHitColor('#FF0000');
+    }
 
     React.useEffect(() => {
         async function updateColors() {
