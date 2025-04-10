@@ -1,6 +1,7 @@
 import React from 'react';
 import { Board } from './board';
 import { Legend } from './legend';
+import { GameEvent, GameCommunicator } from './GameCommunicator';
 import './play.css';
 
 export function Play(props) {
@@ -116,6 +117,7 @@ export function Play(props) {
   }
 
   React.useEffect(() => {
+    GameCommunicator.broadcastCommunication(props.userName, GameEvent.Searching, {});
     setTimeout(() => {
       // This will be replaced with WebSocket message from the opponent's game
       setOpponentShips(new Map([
