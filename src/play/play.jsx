@@ -116,19 +116,21 @@ export function Play(props) {
     return Math.floor(Math.random() * (9 - 1 + 1) + 1)*30;
   }
 
+  function handleCommunication(message) {
+    console.log(message);
+  }
+
   React.useEffect(() => {
-    GameCommunicator.broadcastCommunication(props.userName, GameEvent.Searching, {});
-    setTimeout(() => {
-      // This will be replaced with WebSocket message from the opponent's game
-      setOpponentShips(new Map([
-        [0, {x: 30, y: 30, color: props.gridColor? props.gridColor : '#008000'}],
-        [1, {x: 150, y: 90, color: props.gridColor? props.gridColor : '#008000'}],
-        [2, {x: 270, y: 150, color: props.gridColor? props.gridColor : '#008000'}],
-        [3, {x: 180, y: 240, color: props.gridColor? props.gridColor : '#008000'}],
-        [4, {x: 240, y: 270, color: props.gridColor? props.gridColor : '#008000'}]
-      ]));
-    }, 3000);
-  }, [])
+    // if (lookingForOpponent) {
+    //   GameCommunicator.broadcastCommunication(props.userName, GameEvent.Searching, {});
+    // }
+    GameCommunicator.connectSocket();
+    // GameCommunicator.addHandler(handleCommunication);
+    // Close WebSocket when player leaves play page
+    return () => {
+      GameCommunicator.closeSocket();
+    };
+  }, []);
 
   React.useEffect(() => {
     setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
