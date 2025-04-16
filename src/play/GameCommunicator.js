@@ -1,6 +1,7 @@
 const GameEvent = {
     Attack: 'attack',
     Matched: 'matched',
+    Disconnected: 'opponentDisconnected',
 };
 
 class GameCommunication {

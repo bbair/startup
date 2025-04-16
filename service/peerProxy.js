@@ -83,8 +83,16 @@ function peerProxy(httpServer) {
       // Find the game room and remove the player if they were part of a game
       gameRooms.forEach(gameRoom => {
         gameRoom.players = gameRoom.players.filter(player => player.socket !== socket);
-        if (gameRoom.players.length === 0) {
-          // If both players left, remove the game room
+        if (gameRoom.players.length === 1) {
+          // Send a message if opponent disconnects
+          gameRoom.players[0].socket.send(JSON.stringify({
+            from: 'salvoAttack',
+            type: 'opponentDisconnected',
+            value: {},
+          }));
+          // Add opponent back to queue
+          playerQueue.push({ playerID: gameRoom.players[0].playerID, socket: gameRoom.players[0].socket });
+          // Remove game room
           gameRooms = gameRooms.filter(room => room.roomId !== gameRoom.roomId);
         }
       });

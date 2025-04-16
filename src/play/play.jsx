@@ -117,12 +117,32 @@ export function Play(props) {
     return Math.floor(Math.random() * (9 - 1 + 1) + 1)*30;
   }
 
+  function resetGame() {
+    setAttackCount(0);
+    setOpponentBoardMarkers(new Map());
+    setOpponentHits(new Map());
+    setOpponentMisses(new Map());
+    setOpponentShips(new Map());
+    setPlayerAttacks(new Map());
+    setPlayerBoardMarkers(new Map());
+    setPlayerHits(new Map());
+    setPlayerMisses(new Map());
+    setPlayerShips(new Map());
+  }
+
   function handleCommunication(message) {
     console.log(message);
     if (message.type === GameEvent.Matched) {
-      setMessage('Found an opponent!')
-      setOpponent(message.value.opponent)
-      setAllowPlayer(true)
+      setMessage('Found an opponent!');
+      setOpponent(message.value.opponent);
+      setAllowPlayer(true);
+    }
+    else if (message.type === GameEvent.Disconnected) {
+      setMessage('Waiting for opponent...');
+      // Reset to defaults
+      resetGame();
+      setOpponent(null);
+      setAllowPlayer(false);
     }
   }
 
