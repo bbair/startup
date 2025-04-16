@@ -133,7 +133,7 @@ export function Play(props) {
   function handleCommunication(message) {
     console.log(message);
     if (message.type === GameEvent.Matched) {
-      setMessage('Found an opponent!');
+      setMessage('Found an opponent! Place your ships');
       setOpponent(message.value.opponent);
       setAllowPlayer(true);
     }
@@ -180,18 +180,20 @@ export function Play(props) {
 
   return (
     <main>
-      <div className="text-white-50">
-        Player:
-        <span>{props.userName}</span>
-      </div>
-      {
-        opponent && (
-          <div className="text-white-50">
-            Opponent:
-            <span>{opponent}</span>
-          </div>
-        )
-      }
+      <section>
+        <div className="text-white-50">
+          Player:
+          <span>{props.userName}</span>
+        </div>
+        {
+          opponent && (
+            <div className="text-white-50 opponent-display">
+              Opponent:
+              <span>{opponent}</span>
+            </div>
+          )
+        }
+      </section>
 
       <h4>{message}</h4>
 
@@ -199,26 +201,28 @@ export function Play(props) {
         {
           allowPlayer && (
             <div>
-              <div>
-                <h4 className="green-text">Your Board</h4>
-                <Board
-                  markers={playerBoardMarkers}
-                  gridColor={props.gridColor? props.gridColor : '#008000'}
-                  onClick={(position) => {
-                    addShip(position);
-                  }}
-                />
-              </div>
-              <div>
-                <h4 className="green-text">Opponent's Board</h4>
-                <Board
-                  markers={opponentBoardMarkers}
-                  gridColor={props.gridColor? props.gridColor : '#008000'}
-                  onClick={(position) => {
-                    addAttack(position);
-                  }}
-                />
-              </div>
+              <h4 className="green-text">Your Board</h4>
+              <Board
+                markers={playerBoardMarkers}
+                gridColor={props.gridColor? props.gridColor : '#008000'}
+                onClick={(position) => {
+                  addShip(position);
+                }}
+              />
+            </div>
+          )
+        }
+        {
+          allowPlayer && (
+            <div>
+              <h4 className="green-text">Opponent's Board</h4>
+              <Board
+                markers={opponentBoardMarkers}
+                gridColor={props.gridColor? props.gridColor : '#008000'}
+                onClick={(position) => {
+                  addAttack(position);
+                }}
+              />
             </div>
           )
         }
