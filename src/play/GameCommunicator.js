@@ -1,12 +1,13 @@
 const GameEvent = {
     Attack: 'attack',
+    Matched: 'matched',
 };
 
 class GameCommunication {
     constructor(from, type, value) {
-        this.from = from;
-        this.type = type;
-        this.value = value;
+      this.from = from;
+      this.type = type;
+      this.value = value;
     }
 }
 
@@ -14,13 +15,13 @@ class GameEventCommunicator {
     events = [];
     handlers = [];
 
-    connectSocket() {
+    connectSocket(username) {
         let port = window.location.port;
         const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-        this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
-        this.socket.onmessage = async (msg) => {
+        this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws?username=${username}`);
+        this.socket.onmessage = (msg) => {
           try {
-            const event = JSON.parse(await msg.data.text());
+            const event = JSON.parse(msg.data);
             this.receiveEvent(event);
           } catch {}
         };

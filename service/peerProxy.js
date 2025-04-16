@@ -1,4 +1,5 @@
 const { WebSocketServer } = require('ws');
+const url = require('url');
 
 function peerProxy(httpServer) {
   // Create a websocket object
@@ -10,15 +11,21 @@ function peerProxy(httpServer) {
   // Store game rooms: Each game room has two players
   let gameRooms = [];
 
-  socketServer.on('connection', (socket) => {
-    console.log('A player connected.');
+  socketServer.on('connection', (socket, req) => {
+    const query = url.parse(req.url, true).query;
+    const username = query.username;
+  
+    if (!username) {
+      console.log('Connection rejected: no username');
+      socket.close();
+      return;
+    }
+
+    console.log(`${username} connected.`);
     socket.isAlive = true;
 
-    // Assign player a unique ID
-    const playerId = Date.now(); // Using timestamp for unique player ID
-  
     // Add the player to the queue for matchmaking
-    playerQueue.push({ playerId, socket });
+    playerQueue.push({ playerID: username, socket });
 
     // Check if there are two players available for a game
     if (playerQueue.length >= 2) {
@@ -34,7 +41,17 @@ function peerProxy(httpServer) {
   
       gameRooms.push(gameRoom);
 
-      console.log(`Game started between Player ${player1.playerId} and Player ${player2.playerId}`);
+      console.log(`Game started between Player ${player1.playerID} and Player ${player2.playerID}`);
+      player1.socket.send(JSON.stringify({
+        from: 'salvoAttack',
+        type: 'matched',
+        value: { opponent: player2.playerID },
+      }));
+      player2.socket.send(JSON.stringify({
+        from: 'salvoAttack',
+        type: 'matched',
+        value: { opponent: player1.playerID },
+      }));
     }
 
     // Forward messages to everyone except the sender
@@ -42,11 +59,11 @@ function peerProxy(httpServer) {
       if (data.type === 'attack') {
         // Find the game room that the player is part of
         const gameRoom = gameRooms.find(room =>
-          room.players.some(player => player.playerId === data.playerId)
+          room.players.some(player => player.playerID === data.playerID)
         );
   
         if (gameRoom) {  
-          console.log(`Attack received from Player ${data.playerId}`);
+          console.log(`Attack received from Player ${data.playerID}`);
         }
       }
     });

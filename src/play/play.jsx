@@ -5,10 +5,11 @@ import { GameEvent, GameCommunicator } from './GameCommunicator';
 import './play.css';
 
 export function Play(props) {
-  const [allowPlayer, setAllowPlayer] = React.useState(true);
+  const [allowPlayer, setAllowPlayer] = React.useState(false);
   const [attackCount, setAttackCount] = React.useState(0);
-  const [message, setMessage] = React.useState('Place your ships');
+  const [message, setMessage] = React.useState('Waiting for opponent...');
   const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
+  const [opponent, setOpponent] = React.useState(null);
   const [opponentHits, setOpponentHits] = React.useState(new Map());
   const [opponentMisses, setOpponentMisses] = React.useState(new Map());
   const [opponentShips, setOpponentShips] = React.useState(new Map());
@@ -118,14 +119,16 @@ export function Play(props) {
 
   function handleCommunication(message) {
     console.log(message);
+    if (message.type === GameEvent.Matched) {
+      setMessage('Found an opponent!')
+      setOpponent(message.value.opponent)
+      setAllowPlayer(true)
+    }
   }
 
   React.useEffect(() => {
-    // if (lookingForOpponent) {
-    //   GameCommunicator.broadcastCommunication(props.userName, GameEvent.Searching, {});
-    // }
-    GameCommunicator.connectSocket();
-    // GameCommunicator.addHandler(handleCommunication);
+    GameCommunicator.connectSocket(props.userName);
+    GameCommunicator.addHandler(handleCommunication);
     // Close WebSocket when player leaves play page
     return () => {
       GameCommunicator.closeSocket();
@@ -161,30 +164,44 @@ export function Play(props) {
         Player:
         <span>{props.userName}</span>
       </div>
+      {
+        opponent && (
+          <div className="text-white-50">
+            Opponent:
+            <span>{opponent}</span>
+          </div>
+        )
+      }
 
       <h4>{message}</h4>
 
       <section className="text-center">
-        <div>
-          <h4 className="green-text">Your Board</h4>
-          <Board
-            markers={playerBoardMarkers}
-            gridColor={props.gridColor? props.gridColor : '#008000'}
-            onClick={(position) => {
-              addShip(position);
-            }}
-          />
-        </div>
-        <div>
-          <h4 className="green-text">Opponent's Board</h4>
-          <Board
-            markers={opponentBoardMarkers}
-            gridColor={props.gridColor? props.gridColor : '#008000'}
-            onClick={(position) => {
-              addAttack(position);
-            }}
-          />
-        </div>
+        {
+          allowPlayer && (
+            <div>
+              <div>
+                <h4 className="green-text">Your Board</h4>
+                <Board
+                  markers={playerBoardMarkers}
+                  gridColor={props.gridColor? props.gridColor : '#008000'}
+                  onClick={(position) => {
+                    addShip(position);
+                  }}
+                />
+              </div>
+              <div>
+                <h4 className="green-text">Opponent's Board</h4>
+                <Board
+                  markers={opponentBoardMarkers}
+                  gridColor={props.gridColor? props.gridColor : '#008000'}
+                  onClick={(position) => {
+                    addAttack(position);
+                  }}
+                />
+              </div>
+            </div>
+          )
+        }
       </section>
 
       <Legend
