@@ -55,15 +55,19 @@ function peerProxy(httpServer) {
     }
 
     // Forward messages to everyone except the sender
-    socket.on('message', function message(data) {
+    socket.on('message', (message) => {
+      const data = JSON.parse(message);
+      console.log(data)
       if (data.type === 'attack') {
         // Find the game room that the player is part of
         const gameRoom = gameRooms.find(room =>
-          room.players.some(player => player.playerID === data.playerID)
+          room.players.some(player => player.playerID === data.from)
         );
   
         if (gameRoom) {  
-          console.log(`Attack received from Player ${data.playerID}`);
+          console.log(`Attack received from Player ${data.from}`);
+          const opponent = gameRoom.players.find(p => p.playerID !== data.from);
+          opponent.socket.send(JSON.stringify(data));
         }
       }
     });

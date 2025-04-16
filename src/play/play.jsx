@@ -25,59 +25,8 @@ export function Play(props) {
         const newPlayerAttacks = new Map(previousAttacks);
         newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
         if (attackCount === 5) {
+          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Attack, { attacks: Array.from(newPlayerAttacks.values()) })
           setMessage('Waiting for opponent...')
-          setTimeout(() => {
-            // This will be replaced with a WebSocket message from the opponent's game
-            const opponentAttacks = new Map([
-              [0, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
-              [1, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
-              [2, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
-              [3, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }],
-              [4, { x: getRandomPosition(), y: getRandomPosition(), color: '#FFFFFF' }]
-            ]);
-            opponentAttacks.forEach(attack => {
-              setOpponentHits(previousHits => {
-                const newOpponentHits = new Map(previousHits);
-                if ([...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newOpponentHits.set(previousHits.size, {
-                    x: attack.x,
-                    y: attack.y,
-                    color: props.hitColor? props.hitColor : '#FF0000'
-                  });
-                }
-                return newOpponentHits;
-              });
-              setOpponentMisses(previousMisses => {
-                const newOpponentMisses = new Map(previousMisses);
-                if (![...playerShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newOpponentMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
-                }
-                return newOpponentMisses;
-              });
-            });
-            newPlayerAttacks.forEach(attack => {
-              setPlayerHits(previousHits => {
-                const newPlayerHits = new Map(previousHits);
-                if ([...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newPlayerHits.set(previousHits.size, {
-                    x: attack.x,
-                    y: attack.y,
-                    color: props.hitColor? props.hitColor : '#FF0000'
-                  });
-                }
-                return newPlayerHits;
-              });
-              setPlayerMisses(previousMisses => {
-                const newPlayerMisses = new Map(previousMisses);
-                if (![...opponentShips.values()].some(value => value.x === attack.x && value.y === attack.y)) {
-                  newPlayerMisses.set(previousMisses.size, { x: attack.x, y: attack.y, color: '#FFFFFF' });
-                }
-                return newPlayerMisses;
-              });
-            });
-            setAttackCount(1);
-            setMessage('Choose where to attack');
-          }, 1000);
         }
         return newPlayerAttacks;
       });
@@ -113,10 +62,6 @@ export function Play(props) {
     return combinedMap;
   }
 
-  function getRandomPosition() {
-    return Math.floor(Math.random() * (9 - 1 + 1) + 1)*30;
-  }
-
   function resetGame() {
     setAttackCount(0);
     setOpponentBoardMarkers(new Map());
@@ -131,7 +76,6 @@ export function Play(props) {
   }
 
   function handleCommunication(message) {
-    console.log(message);
     if (message.type === GameEvent.Matched) {
       setMessage('Found an opponent! Place your ships');
       setOpponent(message.value.opponent);
@@ -144,6 +88,10 @@ export function Play(props) {
       setOpponent(null);
       setAllowPlayer(false);
     }
+    else if (message.type === GameEvent.Attack) {
+      console.log('attacks: ', message.value.attacks);
+      // find hits and misses
+    }
   }
 
   React.useEffect(() => {
@@ -152,6 +100,7 @@ export function Play(props) {
     // Close WebSocket when player leaves play page
     return () => {
       GameCommunicator.closeSocket();
+      GameCommunicator.removeHandler(handleCommunication);
     };
   }, []);
 
