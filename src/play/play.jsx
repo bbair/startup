@@ -6,31 +6,41 @@ import './play.css';
 
 export function Play(props) {
   const [allowPlayer, setAllowPlayer] = React.useState(false);
-  const [attackCount, setAttackCount] = React.useState(0);
   const [message, setMessage] = React.useState('Finding an opponent...');
   const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
   const [opponent, setOpponent] = React.useState(null);
   const [opponentHits, setOpponentHits] = React.useState(new Map());
   const [opponentMisses, setOpponentMisses] = React.useState(new Map());
-  const [opponentShips, setOpponentShips] = React.useState(new Map());
   const [playerAttacks, setPlayerAttacks] = React.useState(new Map());
   const [playerBoardMarkers, setPlayerBoardMarkers] = React.useState(new Map());
   const [playerHits, setPlayerHits] = React.useState(new Map());
   const [playerMisses, setPlayerMisses] = React.useState(new Map());
   const [playerShips, setPlayerShips] = React.useState(new Map());
+  const currentAttacksRef = React.useRef(new Map());
   const opponentRef = React.useRef(opponent);
+  const playerAttacksRef = React.useRef(playerAttacks);
   const playerShipsRef = React.useRef(playerShips);
-
+  
   function addAttack(position) {
-    if (attackCount <= 5 && playerShipsRef.current.size === 5 && allowPlayer) {
-      setPlayerAttacks(previousAttacks => {
-        const newPlayerAttacks = new Map(previousAttacks);
-        newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
-        if (attackCount === 5) {
-          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Attack, { attacks: Array.from(newPlayerAttacks.values()) });
-          setMessage('Waiting for opponent...');
-        }
-        return newPlayerAttacks;
+    if (!allowPlayer || currentAttacksRef.current.size >= 5 || playerShipsRef.current.size < 5) return;
+  
+    const duplicate = Array.from(playerAttacks.values()).some((a) => a.x === position.x && a.y === position.y);
+    if (duplicate) return;
+  
+    const updatedTurnAttacks = new Map(currentAttacksRef.current);
+    updatedTurnAttacks.set(updatedTurnAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
+    currentAttacksRef.current = updatedTurnAttacks;
+  
+    setPlayerAttacks((previousAttacks) => {
+      const newPlayerAttacks = new Map(previousAttacks);
+      newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
+      return newPlayerAttacks;
+    });
+  
+    if (updatedTurnAttacks.size === 5) {
+      setMessage('Waiting for opponent...');
+      GameCommunicator.broadcastCommunication(props.userName, GameEvent.Attack, {
+        attacks: Array.from(updatedTurnAttacks.values()),
       });
     }
   }
@@ -89,23 +99,22 @@ export function Play(props) {
         missKey = missKey + 1;
       }
     });
-    setOpponentHits(hits);
-    setOpponentMisses(misses);
+    // need to update not just set
+    setOpponentHits((previousHits) => {
+      const updatedOpponentHits = new Map(previousHits);
+      hits.forEach(hit => {
+        updatedOpponentHits.set(updatedOpponentHits.size, hit);
+      })
+      return updatedOpponentHits;
+    });
+    setOpponentMisses((previousMisses) => {
+      const updatedOpponentMisses = new Map(previousMisses);
+      misses.forEach(miss => {
+        updatedOpponentMisses.set(updatedOpponentMisses.size, miss);
+      })
+      return updatedOpponentMisses;
+    });
     GameCommunicator.broadcastCommunication(props.userName, GameEvent.Hits, { hits: Array.from(hits.values()) });
-  }
-
-  function resetGame() {
-    setAttackCount(0);
-    setOpponentBoardMarkers(new Map());
-    setOpponentHits(new Map());
-    setOpponentMisses(new Map());
-    setOpponentShips(new Map());
-    setPlayerAttacks(new Map());
-    setPlayerBoardMarkers(new Map());
-    setPlayerHits(new Map());
-    setPlayerMisses(new Map());
-    setPlayerShips(new Map());
-    playerShipsRef.current = new Map();
   }
 
   function handleCommunication(message) {
@@ -126,17 +135,51 @@ export function Play(props) {
       findHits(message.value.attacks);
     }
     else if (message.type === GameEvent.Hits) {
-      console.log(playerShipsRef.current);
-      console.log('hits: ', message.value.hits);
+      processHits(message.value.hits);
+      currentAttacksRef.current = new Map();
+      setAllowPlayer(true);
+      setMessage('Choose where to attack');
     }
     else {
       console.log(message.type)
     }
   }
 
+  function processHits(hits) {
+    setPlayerHits(previousHits => {
+      const updatedHits = new Map(previousHits);
+      hits.forEach(hit => {
+        updatedHits.set(updatedHits.size, {
+          x: hit.x,
+          y: hit.y,
+          color: props.hitColor || '#FF0000',
+        });
+      });
+      return updatedHits;
+    });
+  }
+
+  function resetGame() {
+    setOpponentBoardMarkers(new Map());
+    setOpponentHits(new Map());
+    setOpponentMisses(new Map());
+    setPlayerAttacks(new Map());
+    setPlayerBoardMarkers(new Map());
+    setPlayerHits(new Map());
+    setPlayerMisses(new Map());
+    setPlayerShips(new Map());
+    currentAttacksRef.current = new Map();
+    playerAttacksRef.current = new Map();
+    playerShipsRef.current = new Map();
+  }
+
   React.useEffect(() => {
     opponentRef.current = opponent;
   }, [opponent]);
+
+  React.useEffect(() => {
+    playerAttacksRef.current = playerAttacks;
+  }, [playerAttacks]);
 
   React.useEffect(() => {
     playerShipsRef.current = playerShips;
@@ -159,10 +202,6 @@ export function Play(props) {
   React.useEffect(() => {
     setOpponentBoardMarkers(combineMaps([playerHits,playerMisses,playerAttacks]));
   }, [playerHits, playerMisses, playerAttacks]);
-
-  React.useEffect(() => {
-    setAttackCount(prev => prev + 1);
-  }, [playerAttacks]);
  
 
   React.useEffect(() => {

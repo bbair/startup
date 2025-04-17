@@ -85,6 +85,10 @@ function peerProxy(httpServer) {
               value: { attacks: opponentAttacks }
             }));
           });
+          gameRoom.attacks = {
+            [gameRoom.players[0].playerID]: null,
+            [gameRoom.players[1].playerID]: null,
+          }
         }
       }
       else {
