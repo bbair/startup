@@ -1,9 +1,10 @@
 const GameEvent = {
   Attack: 'attack',
-  Matched: 'matched',
   Disconnected: 'opponentDisconnected',
   Hits: 'sendingHits',
-  Misses: 'sendingMisses',
+  Matched: 'matched',
+  SendingAttacks: 'sendingAttacks',
+  Ships: 'ships',
 };
 
 class GameCommunication {
@@ -15,7 +16,6 @@ class GameCommunication {
 }
 
 class GameEventCommunicator {
-  events = [];
   handlers = [];
 
   connectSocket(username) {
@@ -38,13 +38,11 @@ class GameEventCommunicator {
 
   broadcastCommunication(from, type, value) {
     const event = new GameCommunication(from, type, value);
-    console.log(event)
     this.socket.send(JSON.stringify(event));
   }
 
   addHandler(handler) {
     this.handlers.push(handler);
-    console.log(this.handlers);
   }
 
   removeHandler(handler) {
@@ -52,12 +50,8 @@ class GameEventCommunicator {
   }
 
   receiveEvent(event) {
-    this.events.push(event);
-
-    this.events.forEach((e) => {
-      this.handlers.forEach((handler) => {
-        handler(e);
-      });
+    this.handlers.forEach((handler) => {
+      handler(event);
     });
   }
 }

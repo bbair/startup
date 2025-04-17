@@ -21,7 +21,7 @@ function peerProxy(httpServer) {
       return;
     }
 
-    console.log(`${username} connected.`);
+    // console.log(`${username} connected.`);
     socket.isAlive = true;
 
     // Add the player to the queue for matchmaking
@@ -37,11 +37,19 @@ function peerProxy(httpServer) {
       const gameRoom = {
         roomId: Date.now(),  // Unique game room ID
         players: [player1, player2],
+        attacks: {
+          [player1.playerID]: null,
+          [player2.playerID]: null,
+        },
+        ships: {
+          [player1.playerID]: null,
+          [player2.playerID]: null,
+        },
       };
   
       gameRooms.push(gameRoom);
 
-      console.log(`Game started between Player ${player1.playerID} and Player ${player2.playerID}`);
+      // console.log(`Game started between Player ${player1.playerID} and Player ${player2.playerID}`);
       player1.socket.send(JSON.stringify({
         from: 'salvoAttack',
         type: 'matched',
@@ -57,18 +65,41 @@ function peerProxy(httpServer) {
     // Forward messages to everyone except the sender
     socket.on('message', (message) => {
       const data = JSON.parse(message);
-      console.log(data)
+      // Find the game room that the player is part of
+      const gameRoom = gameRooms.find(room =>
+        room.players.some(player => player.playerID === data.from)
+      );
+      
+      if (!gameRoom) return;
+
+      const opponent = gameRoom.players.find(p => p.playerID !== data.from);
       if (data.type === 'attack') {
-        // Find the game room that the player is part of
-        const gameRoom = gameRooms.find(room =>
-          room.players.some(player => player.playerID === data.from)
-        );
+        gameRoom.attacks[data.from] = data.value.attacks;
+
+        // when both submitted, send to both
+        const allSubmitted = Object.values(gameRoom.attacks).every(a => a !== null);
+        if (allSubmitted) {
+          gameRoom.players.forEach(p => {
+            const oppID = p.playerID === data.from ? opponent.playerID : data.from;
+            const opponentAttacks = gameRoom.attacks[oppID];
+            const playerShips = gameRoom.ships[p.playerID]
   
-        if (gameRoom) {  
-          console.log(`Attack received from Player ${data.from}`);
-          const opponent = gameRoom.players.find(p => p.playerID !== data.from);
-          opponent.socket.send(JSON.stringify(data));
+            p.socket.send(JSON.stringify({
+              from: 'salvoAttack',
+              type: 'sendingAttacks',
+              value: {
+                attacks: opponentAttacks,
+                ships: playerShips,
+              }
+            }));
+          });
         }
+      }
+      else if (data.type === 'ships') {
+        gameRoom.ships[data.from] = data.value.ships;
+      }
+      else {
+        opponent.socket.send(JSON.stringify(data));
       }
     });
 
@@ -79,7 +110,7 @@ function peerProxy(httpServer) {
 
     // Handle client disconnection
     socket.on('close', () => {
-      console.log('A player disconnected.');
+      // console.log('A player disconnected.');
 
       // Remove the player from the queue if they haven't been paired yet
       playerQueue = playerQueue.filter(player => player.socket !== socket);
@@ -100,6 +131,10 @@ function peerProxy(httpServer) {
           gameRooms = gameRooms.filter(room => room.roomId !== gameRoom.roomId);
         }
       });
+    });
+
+    socket.on("error", (err) => {
+      console.log(err.stack);
     });
   });
 

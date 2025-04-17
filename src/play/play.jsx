@@ -7,7 +7,7 @@ import './play.css';
 export function Play(props) {
   const [allowPlayer, setAllowPlayer] = React.useState(false);
   const [attackCount, setAttackCount] = React.useState(0);
-  const [message, setMessage] = React.useState('Waiting for opponent...');
+  const [message, setMessage] = React.useState('Finding an opponent...');
   const [opponentBoardMarkers, setOpponentBoardMarkers] = React.useState(new Map());
   const [opponent, setOpponent] = React.useState(null);
   const [opponentHits, setOpponentHits] = React.useState(new Map());
@@ -25,26 +25,29 @@ export function Play(props) {
         const newPlayerAttacks = new Map(previousAttacks);
         newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
         if (attackCount === 5) {
-          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Attack, { attacks: Array.from(newPlayerAttacks.values()) })
-          setMessage('Waiting for opponent...')
+          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Attack, { attacks: Array.from(newPlayerAttacks.values()) });
+          setMessage('Waiting for opponent...');
         }
         return newPlayerAttacks;
       });
     }
-  }  
+  }
 
   function addShip(position) {
     if (playerShips.size < 5) {
-      const newPlayerShips = new Map([...playerShips])
-      newPlayerShips.set(playerShips.size,{
-        x: position.x,
-        y: position.y,
-        color: props.gridColor? props.gridColor : '#008000'
+      setPlayerShips(previousShips => {
+        const newPlayerShips = new Map(previousShips);
+        newPlayerShips.set(newPlayerShips.size, {
+          x: position.x,
+          y: position.y,
+          color: props.gridColor? props.gridColor : '#008000'
+        });
+        if (newPlayerShips.size === 5) {
+          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Ships, { ships: Array.from(newPlayerShips.values()) });
+          setMessage('Choose where to attack');
+        }
+        return newPlayerShips;
       });
-      setPlayerShips(newPlayerShips);
-      if (newPlayerShips.size === 5) {
-        setMessage('Choose where to attack');
-      }
     }
   }
 
@@ -62,6 +65,33 @@ export function Play(props) {
     return combinedMap;
   }
 
+  function findHits(opponentAttacks, ships) {
+    const hits = new Map();
+    const misses = new Map();
+    let hitKey = 0;
+    let missKey = 0;
+    opponentAttacks.forEach(attack => {
+      const ship = ships.find(s => attack.x === s.x && attack.y === s.y);
+      if (ship) {
+        hits.set(hitKey, {
+          x: attack.x,
+          y: attack.y,
+          color: props.hitColor ? props.hitColor : '#FF0000',
+        });
+        hitKey = hitKey + 1;
+      }
+      else {
+        misses.set(missKey, attack);
+        missKey = missKey + 1;
+      }
+    });
+    console.log(hits);
+    setOpponentHits(hits);
+    console.log(misses);
+    setOpponentMisses(misses);
+    GameCommunicator.broadcastCommunication(props.userName, GameEvent.Hits, { hits: Array.from(hits.values()) });
+  }
+
   function resetGame() {
     setAttackCount(0);
     setOpponentBoardMarkers(new Map());
@@ -77,20 +107,30 @@ export function Play(props) {
 
   function handleCommunication(message) {
     if (message.type === GameEvent.Matched) {
+      if (opponent) {
+        return;
+      }
       setMessage('Found an opponent! Place your ships');
       setOpponent(message.value.opponent);
       setAllowPlayer(true);
     }
     else if (message.type === GameEvent.Disconnected) {
-      setMessage('Waiting for opponent...');
+      setMessage('Finding an opponent...');
       // Reset to defaults
       resetGame();
       setOpponent(null);
       setAllowPlayer(false);
     }
-    else if (message.type === GameEvent.Attack) {
-      console.log('attacks: ', message.value.attacks);
-      // find hits and misses
+    else if (message.type === GameEvent.SendingAttacks) {
+      setPlayerShips(message.value.ships);
+      findHits(message.value.attacks, message.value.ships);
+    }
+    else if (message.type === GameEvent.Hits) {
+      console.log(playerShips);
+      console.log('hits: ', message.value.hits);
+    }
+    else {
+      console.log(message.type)
     }
   }
 
