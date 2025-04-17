@@ -87,3 +87,10 @@ For this deliverable I used JavaScript and React so that the application complet
 
 - [x] **Store application data in MongoDB** - Stores custom palette in MongoDB.
 - [x] **Store and retrieve credentials in MongoDB** - Stores users and their authentication tokens in MongoDB.
+
+## Websocket Deliverable
+
+- [x] **Backend listens for WebSocket connection** - With peerProxy in index.js
+- [x] **Frontend makes WebSocket connection** - In play.jsx with GameCommunicator
+- [x] **Data sent over WebSocket connection** - Sends attacks and hits
+- [x] **WebSocket data displayed in the application interface** - Displays opponent's username and opponent's hits and misses
