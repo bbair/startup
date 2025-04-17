@@ -4,7 +4,6 @@ const GameEvent = {
   Hits: 'sendingHits',
   Matched: 'matched',
   SendingAttacks: 'sendingAttacks',
-  Ships: 'ships',
 };
 
 class GameCommunication {

@@ -41,10 +41,6 @@ function peerProxy(httpServer) {
           [player1.playerID]: null,
           [player2.playerID]: null,
         },
-        ships: {
-          [player1.playerID]: null,
-          [player2.playerID]: null,
-        },
       };
   
       gameRooms.push(gameRoom);
@@ -82,21 +78,14 @@ function peerProxy(httpServer) {
           gameRoom.players.forEach(p => {
             const oppID = p.playerID === data.from ? opponent.playerID : data.from;
             const opponentAttacks = gameRoom.attacks[oppID];
-            const playerShips = gameRoom.ships[p.playerID]
   
             p.socket.send(JSON.stringify({
               from: 'salvoAttack',
               type: 'sendingAttacks',
-              value: {
-                attacks: opponentAttacks,
-                ships: playerShips,
-              }
+              value: { attacks: opponentAttacks }
             }));
           });
         }
-      }
-      else if (data.type === 'ships') {
-        gameRoom.ships[data.from] = data.value.ships;
       }
       else {
         opponent.socket.send(JSON.stringify(data));

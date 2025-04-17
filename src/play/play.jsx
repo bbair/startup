@@ -18,9 +18,11 @@ export function Play(props) {
   const [playerHits, setPlayerHits] = React.useState(new Map());
   const [playerMisses, setPlayerMisses] = React.useState(new Map());
   const [playerShips, setPlayerShips] = React.useState(new Map());
+  const opponentRef = React.useRef(opponent);
+  const playerShipsRef = React.useRef(playerShips);
 
   function addAttack(position) {
-    if (attackCount <= 5 && playerShips.size === 5 && allowPlayer) {
+    if (attackCount <= 5 && playerShipsRef.current.size === 5 && allowPlayer) {
       setPlayerAttacks(previousAttacks => {
         const newPlayerAttacks = new Map(previousAttacks);
         newPlayerAttacks.set(newPlayerAttacks.size, { x: position.x, y: position.y, color: '#FFFFFF' });
@@ -43,7 +45,6 @@ export function Play(props) {
           color: props.gridColor? props.gridColor : '#008000'
         });
         if (newPlayerShips.size === 5) {
-          GameCommunicator.broadcastCommunication(props.userName, GameEvent.Ships, { ships: Array.from(newPlayerShips.values()) });
           setMessage('Choose where to attack');
         }
         return newPlayerShips;
@@ -53,25 +54,28 @@ export function Play(props) {
 
   function combineMaps(maps) {
     const combinedMap = new Map();
-    let mapIndex = 0;
-    maps.forEach(map => {
-      map.forEach(value => {
-        if (!combinedMap.values().some(v => value.x === v.x && value.y === v.y)) {
-          combinedMap.set(mapIndex,value);
-          mapIndex += 1;
+    const seenPositions = new Set();
+  
+    for (const map of maps) {
+      for (const value of map.values()) {
+        const key = `${value.x},${value.y}`;
+        if (!seenPositions.has(key)) {
+          seenPositions.add(key);
+          combinedMap.set(combinedMap.size, value);
         }
-      });
-    });
+      }
+    }
+  
     return combinedMap;
-  }
+  }  
 
-  function findHits(opponentAttacks, ships) {
+  function findHits(opponentAttacks) {
     const hits = new Map();
     const misses = new Map();
     let hitKey = 0;
     let missKey = 0;
     opponentAttacks.forEach(attack => {
-      const ship = ships.find(s => attack.x === s.x && attack.y === s.y);
+      const ship = Array.from(playerShipsRef.current.values()).find(s => attack.x === s.x && attack.y === s.y);
       if (ship) {
         hits.set(hitKey, {
           x: attack.x,
@@ -85,9 +89,7 @@ export function Play(props) {
         missKey = missKey + 1;
       }
     });
-    console.log(hits);
     setOpponentHits(hits);
-    console.log(misses);
     setOpponentMisses(misses);
     GameCommunicator.broadcastCommunication(props.userName, GameEvent.Hits, { hits: Array.from(hits.values()) });
   }
@@ -103,13 +105,12 @@ export function Play(props) {
     setPlayerHits(new Map());
     setPlayerMisses(new Map());
     setPlayerShips(new Map());
+    playerShipsRef.current = new Map();
   }
 
   function handleCommunication(message) {
     if (message.type === GameEvent.Matched) {
-      if (opponent) {
-        return;
-      }
+      if (opponentRef.current) return;
       setMessage('Found an opponent! Place your ships');
       setOpponent(message.value.opponent);
       setAllowPlayer(true);
@@ -122,17 +123,24 @@ export function Play(props) {
       setAllowPlayer(false);
     }
     else if (message.type === GameEvent.SendingAttacks) {
-      setPlayerShips(message.value.ships);
-      findHits(message.value.attacks, message.value.ships);
+      findHits(message.value.attacks);
     }
     else if (message.type === GameEvent.Hits) {
-      console.log(playerShips);
+      console.log(playerShipsRef.current);
       console.log('hits: ', message.value.hits);
     }
     else {
       console.log(message.type)
     }
   }
+
+  React.useEffect(() => {
+    opponentRef.current = opponent;
+  }, [opponent]);
+
+  React.useEffect(() => {
+    playerShipsRef.current = playerShips;
+  }, [playerShips]);
 
   React.useEffect(() => {
     GameCommunicator.connectSocket(props.userName);
@@ -145,16 +153,17 @@ export function Play(props) {
   }, []);
 
   React.useEffect(() => {
-    setPlayerBoardMarkers(combineMaps([opponentHits,playerShips,opponentMisses]));
+    setPlayerBoardMarkers(combineMaps([opponentHits,playerShipsRef.current,opponentMisses]));
   }, [playerShips, opponentHits, opponentMisses]);
 
   React.useEffect(() => {
     setOpponentBoardMarkers(combineMaps([playerHits,playerMisses,playerAttacks]));
   }, [playerHits, playerMisses, playerAttacks]);
-  
+
   React.useEffect(() => {
-    setAttackCount(attackCount + 1);
+    setAttackCount(prev => prev + 1);
   }, [playerAttacks]);
+ 
 
   React.useEffect(() => {
     if (playerHits.size === 5) {
