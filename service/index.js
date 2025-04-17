@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const app = express();
 const DB = require('./database.js');
+const { peerProxy } = require('./peerProxy.js');
 
 const authCookieName = 'token';
 
@@ -15,7 +16,7 @@ app.use(cookieParser());
 
 app.use(express.static('public'));
 
-let apiRouter = express.Router();
+const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 // Middleware to verify that the user is authorized to call an endpoint
@@ -147,6 +148,8 @@ async function updateColors(colors, user) {
   await DB.updateColors(newColors);
 }
 
-app.listen(port, () => {
+const httpService = app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+peerProxy(httpService);

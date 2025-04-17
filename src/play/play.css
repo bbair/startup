@@ -20,6 +20,10 @@ section {
     align-items: center;
 }
 
+.opponent-display {
+    padding-left: 1em;
+}
+
 @media (orientation: portrait) {
     section {
         flex-direction: column;
